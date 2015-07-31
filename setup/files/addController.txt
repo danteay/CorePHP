@@ -1,0 +1,40 @@
+<?php
+require_once("../models/{{tabla}}.php");
+
+class add{{tabla}}Controller {
+
+    private $instance;
+    private $data;
+
+    public function __construct($data = array()){
+        $this->data = $data;
+        $this->instance = new {{tabla}}();
+
+        $this->__init__();
+    }
+
+    private function __init__(){
+        try{
+            $datasend = array();
+
+            foreach($this->data as $key => $value){
+                $datasend[$key] = $value;
+            }
+
+            $this->instance->setItem($datasend);
+
+            header("Location: ../views/report{{tabla}}.php");
+        }catch (Exception $e){
+            echo "<pre>";
+            print_r($e->getTrace());
+            echo "</pre>";
+        }
+    }
+
+}
+
+if($_POST){
+    $obj = new add{{tabla}}Controller($_POST);
+}else{
+    header("Location: ../views/home.php");
+}

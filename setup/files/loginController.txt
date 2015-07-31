@@ -1,0 +1,53 @@
+<?php
+require_once("../core/SessionUtils.php");
+require_once("../models/{{adminmodel}}.php");
+
+class loginController {
+
+    private ${{llave1}};
+    private ${{llave2}};
+    private $primary;
+    private $session;
+    private $instance;
+
+    public function __construct(${{llave1}} = null, ${{llave2}} = null){
+        $this->{{llave1}} = ${{llave1}};
+        $this->{{llave2}} = ${{llave2}};
+        $this->session = new SessionUtils();
+        $this->instance = new {{adminmodel}}();
+    }
+
+    public function __init__(){
+        try {
+            if ($this->instance->getByUser($this->{{llave1}})) {
+                $this->primary = $this->instance->{{primarykey}};
+
+                if ($this->{{llave2}} == $this->instance->{{llave2}}) {
+                    $this->session->admin = array("id" => $this->primary, "nick" => $this->{{llave1}});
+                    header("Location: ../views/home.php");
+                } else {
+                    header("Location: ../index.php?error=202");
+                }
+            } else {
+                header("Location: ../index.php?error=201");
+            }
+        } catch (Exception $e) {
+            echo $e->getTrace();
+        }
+    }
+
+    public function close(){
+        $this->session->admin = null;
+        header("Location: ../index.php");
+    }
+}
+
+if($_POST){
+    $obj = new loginController($_POST['llave1'], $_POST['llave2']);
+    $obj->__init__();
+}elseif(isset($_GET['sess']) && $_GET['sess'] == 0) {
+    $obj = new loginController();
+    $obj->close();
+}else{
+    echo "<h2>No se pudo procesar la peticion</h2><br><a href='../index.php'>Regresar</a>";
+}

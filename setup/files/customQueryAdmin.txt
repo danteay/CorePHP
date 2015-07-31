@@ -1,0 +1,25 @@
+/******************************************* ADMIN SECTION *******************************************/
+
+        $this->addArray($this->list,"adminGetByUser",
+            "SELECT * FROM {{table}} WHERE {{llave1}} = ?");
+
+        $this->addArray($this->list,"adminGetByPass",
+            "SELECT * FROM {{table}} WHERE {{llave2}} = ?");
+
+        $this->addArray($this->list,"adminGetAdmin",
+            "SELECT * FROM {{table}} WHERE {{primary}} = ?");
+
+        $this->addArray($this->list,"adminGetAllAdmin",
+            "SELECT * FROM {{table}}");
+
+        $this->addArray($this->list,"adminSetAdmin",
+            "INSERT INTO {{table}} ({{queryInserts}}) VALUES ({{valueInserts}})");
+
+        $this->addArray($this->list,"adminUpdateItem",
+            "UPDATE {{table}} SET {{queryUpdateInserts}} WHERE {{primary}} = ?");
+
+        $this->addArray($this->list,"adminDropAdmin",
+            "DELETE FROM {{table}} WHERE {{primary}} = ?");
+
+        $this->addArray($this->list,"getColumnsAdmin",
+            "SHOW COLUMNS FROM {{table}}");

@@ -1,0 +1,63 @@
+<?php
+require_once("../libs/Validations.php");
+require_once("../models/{{tabla}}.php");
+
+$validate = new Validations();
+$instance = new {{tabla}}();
+
+$validate->sessionValidate();
+$validate->editItemValidate($instance);
+?>
+<!doctype html>
+<html>
+<head>
+    <meta charset="iso-8859-1">
+    <title>Editar {{tabla}}</title>
+
+    <link rel="stylesheet" href="../css/foundation.min.css"/>
+    <link rel="stylesheet" href="../css/normalize.css"/>
+    <link rel="stylesheet" href="../css/comun.css"/>
+
+    <script src="../js/jquery-2.1.1.min.js"></script>
+    <script src="../js/foundation.min.js"></script>
+
+    <!--date_plugin-->
+    <!--time_plugin-->
+</head>
+<body>
+
+<?php include("../libs/navigation.php"); ?>
+
+<main>
+    <div class="row">
+        <div class="large-12 columns panel buscador">
+            <ul class="right">
+                <li><a href="report{{tabla}}.php">Cancelar</a></li>
+                <li><a href="../controllers/delete{{tabla}}Controller.php?trim=<?php echo $_GET['edit']; ?>">Eliminar</a></li>
+                <li><a onclick="document.editform.submit()">Guardar Cambios</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="large-12 columns panel">
+            <form action="../controllers/update{{tabla}}Controller.php" method="post" name="editform">
+                {{campos}}
+
+                <input type="hidden" name="itemUpdate" value="<?php echo $_GET['edit']; ?>"/>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="../js/foundation/foundation.dropdown.js"></script>
+<script src="../js/foundation/foundation.topbar.js"></script>
+<!-- Other JS plugins can be included here -->
+
+<script>
+    $(document).foundation();
+    <!--time_actives-->
+    <!--date_actives-->
+</script>
+</body>
+</html>

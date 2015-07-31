@@ -1,0 +1,25 @@
+        /******************************************* ADMIN SECTION *******************************************/
+
+        $this->addArray($this->list,"adminGetByUser",
+            "SELECT * FROM thecore_defaultAdminTable WHERE nickname = ?");
+
+        $this->addArray($this->list,"adminGetByPass",
+            "SELECT * FROM thecore_defaultAdminTable WHERE passwd = ?");
+
+        $this->addArray($this->list,"adminGetAdmin",
+            "SELECT * FROM thecore_defaultAdminTable WHERE idAdmin = ?");
+
+        $this->addArray($this->list,"adminGetAllAdmin",
+            "SELECT * FROM thecore_defaultAdminTable");
+
+        $this->addArray($this->list,"adminSetAdmin",
+            "INSERT INTO thecore_defaultAdminTable (nickname,passwd) VALUES (?,?)");
+
+        $this->addArray($this->list,"adminUpdateItem",
+            "UPDATE thecore_defaultAdminTable SET nickname = ?, passwd = ? WHERE idAdmin = ?");
+
+        $this->addArray($this->list,"adminDropAdmin",
+            "DELETE FROM thecore_defaultAdminTable WHERE idAdmin = ?");
+
+        $this->addArray($this->list,"getColumnsAdmin",
+            "SHOW COLUMNS FROM thecore_defaultAdminTable");

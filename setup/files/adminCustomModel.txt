@@ -1,0 +1,222 @@
+<?php
+require_once("../core/AdminInterface.php");
+require_once("../libs/QueryMap.php");
+require_once("../core/DBOMySQL.php");
+
+class {{table}} extends QueryMap implements AdminInterface {
+
+    {{campos}}
+
+    private $DBO;
+
+    public function __construct(&$conexion = null){
+        parent::__construct();
+
+        {{initialize}}
+
+        if($conexion == null){
+            $this->DBO = new DBOMySQL();
+        }else{
+            $this->DBO = $conexion;
+        }
+    }
+
+    public function __get($data){
+        return $this->$data;
+    }
+
+    public function getByUser($user){
+        $data = $this->DBO->conx->prepare($this->list["adminGetByUser"]);
+        $data->bind_param("s",$user);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                foreach($resp->fetch_assoc() as $key => $value){
+                    $this->$key = $value;
+                }
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+    public function getByPass($pass){
+        $data = $this->DBO->conx->prepare($this->list["adminGetByPass"]);
+        $data->bind_param("s",$pass);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                foreach($resp->fetch_assoc() as $key => $value){
+                    $this->$key = $value;
+                }
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+    public function getItem($id){
+        $data = $this->DBO->conx->prepare($this->list["adminGetAdmin"]);
+        $data->bind_param("s",$id);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                foreach($resp->fetch_assoc() as $key => $value){
+                    $this->$key = $value;
+                }
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+    public function getAllItems(){
+        $data = $this->DBO->conx->prepare($this->list["adminGetAllAdmin"]);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                return $resp;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+    public function setItem($data = array()){
+        extract($data);
+
+        if( {{validates}} ){
+            $data = $this->DBO->conx->prepare($this->list["adminSetAdmin"]);
+            $data->bind_param("{{params}}", {{inserts}} );
+
+            if($data->execute()){
+                $data->close();
+                return true;
+            }else{
+                $data->close();
+                throw new Exception("An error has occurred to execute the query");
+            }
+        }else{
+            throw new Exception("The data is not valid");
+        }
+    }
+
+    public function updateItem($id,$data = array()){
+        extract($data);
+
+        if(is_numeric($id) && {{validates}} ){
+            $data = $this->DBO->conx->prepare($this->list['adminUpdateAdmin']);
+            $data->bind_param("{{params}}s", {{inserts}}, $id);
+
+            if($data->execute()){
+                $data->close();
+                return true;
+            }else{
+                $data->close();
+                throw new Exception("An error has occurred to execute the query");
+            }
+        }else{
+            throw new Exception("The data is not valid");
+        }
+    }
+
+    public function dropItem($id){
+        if(is_numeric($id)){
+            $data = $this->DBO->conx->prepare($this->list["adminDropAdmin"]);
+            $data->bind_param("s", $id);
+
+            if($data->execute()){
+                $data->close();
+                return true;
+            }else{
+                $data->close();
+                throw new Exception("An error has occurred to execute the query");
+            }
+        }else{
+            throw new Exception("The data is not valid");
+        }
+    }
+
+    public function getColumns(){
+        $data = $this->DBO->conx->prepare($this->list["getColumnsAdmin"]);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                return $resp;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+    /*
+    / Funcion:
+    /     Regresa un filtrado de infomacion con respecto a campos y patron
+    / Prototipo:
+    /     bool | mysql_result function getAllItems();
+    / Parametros:
+    /     filter - Columna sobre la cual se buscara el patron
+    /     patern - Cadena a buscar en el campo o campos especificados
+    */
+    public function getFilter($filter, $patern){
+        if($filter == 'all'){
+            try{
+                $flag =true;
+                $evaluate = "";
+
+                $data = $this->getColumns();
+
+                while($col = $data->fetch_array(MYSQLI_NUM)){
+                    if($flag){
+                        $evaluate .= $col[0]." LIKE '%".$patern."%' ";
+                        $flag = false;
+                    }else{
+                        $evaluate .= " or ".$col[0]." LIKE '%".$patern."%' ";
+                    }
+                }
+
+                $this->DBO->initializeQuery("SELECT * FROM {{table}} WHERE ".$evaluate);
+                $result = $this->DBO->getRequest();
+
+                return $result;
+            }catch (Exception $e){
+                echo $e->getTrace();
+            }
+        }elseif(!empty($filter)){
+            $this->DBO->initializeQuery("SELECT * FROM {{table}} WHERE ".$filter." LIKE '%".$patern."%'");
+            $result = $this->DBO->getRequest();
+
+            return $result;
+        }else{
+            return $this->getAllItems();
+        }
+    }
+}

@@ -1,0 +1,43 @@
+<?php
+
+class QueryMap {
+
+    protected $list; //arreglo de querys
+
+    public function __construct(){
+        $this->list = array(); // se inicializa el array para la insercion con 'addArray'
+        $this->addQuerys();
+    }
+
+
+
+    /*----------------------------------------------------------------------------------------------------------------
+                                aqui se agregan todos los querys que se cargaran en la pagina
+    ----------------------------------------------------------------------------------------------------------------*/
+
+    private function addQuerys(){
+
+    {{querys}}
+
+    {{adminsection}}
+
+    }
+
+
+
+    /*----------------------------------------------------------------------------------------------------------------
+                                        FUNCION DE AGREGACION AL ARREGLO GLOBAL
+    ----------------------------------------------------------------------------------------------------------------*/
+
+    private function addArray(&$array,$keyName,$value){
+        try{
+            if(!empty($keyName)){
+                $array[$keyName] = $value;
+            }else{
+                throw new Exception("Key of the element can't be empty or null");
+            }
+        }catch (Exception $e){
+            echo "<em>An error has occurred into QueryMap.php.</em><br>".$e->getMessage()."  <br><b>Line: ".$e->getLine()." In ".$e->getFile()."</b><br><br>";
+        }
+    }
+}

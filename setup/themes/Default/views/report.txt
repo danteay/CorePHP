@@ -1,0 +1,151 @@
+<?php
+require_once("../libs/Validations.php");
+require_once("../models/{{tabla}}.php");
+
+$objmodel = new {{tabla}}();
+$validate = new Validations();
+
+$validate->sessionValidate();
+?>
+<!doctype html>
+<html>
+<head>
+    <meta charset="iso-8859-1">
+    <title>Reporte {{tabla}}</title>
+
+    <link rel="stylesheet" href="../css/foundation.min.css"/>
+    <link rel="stylesheet" href="../css/normalize.css"/>
+    <link rel="stylesheet" href="../css/comun.css"/>
+
+    <script src="../js/jquery-2.1.1.min.js"></script>
+    <script src="../js/foundation.min.js"></script>
+</head>
+<body>
+
+    <?php include("../libs/navigation.php"); ?>
+
+    <main>
+        <form action="report{{tabla}}.php" method="post">
+            <div class="row">
+                <div class="large-12 columns panel buscador">
+                    <ul>
+                        <li>
+                            <select name="columnFilter" id="columnFilter">
+                                <option value="all">Todas</option>
+                                <?php
+                                    try{
+                                        $columns = $objmodel->getColumns();
+
+                                        while($col = $columns->fetch_array(MYSQLI_NUM)){
+                                            echo "<option value='".$col[0]."'>".$col[0]."</option>";
+                                        }
+                                    }catch (Exception $e){
+                                        echo $e->getTrace();
+                                    }
+                                ?>
+                            </select>
+                        </li>
+                        <li><input type="text" name="buscar" placeholder="Buscar.."/></li>
+                        <li><button class="button-search">Buscar</button></li>
+                        <li class="right">
+                            <ul>
+                                <li><a href="add{{tabla}}.php">Agregar</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="large-12 columns">
+                <table style="margin: 0 auto">
+                    <thead>
+                        <tr>
+                            {{editHeader}}
+
+                            <?php
+                                $stat = 0;
+                                $cont = 0;
+
+                                try{
+                                    $columns = $objmodel->getColumns();
+
+                                    while($col = $columns->fetch_array(MYSQLI_NUM)){
+                                        echo "<th>".$col[0]."</th>";
+
+                                        if($col[3] == "PRI"){
+                                            $stat = $cont;
+                                        }
+
+                                        $cont++;
+                                    }
+                                }catch (Exception $e){
+                                    echo $e->getTrace();
+                                }
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            if(isset($_POST['columnFilter']) && isset($_POST['buscar'])){
+                                try{
+                                    $data = $objmodel->getFilter($_POST['columnFilter'],"%".$_POST['buscar']."%");
+
+                                    if($data != false){
+                                        while($fila = $data->fetch_array(MYSQLI_NUM)){
+                                            echo "<tr>";
+                                            echo "{{reportEditButton}}";
+
+                                            foreach($fila as $value){
+                                                echo "<td>".$value."</td>";
+                                            }
+
+                                            echo "</tr>";
+                                        }
+                                    }else{
+                                        echo "<center><h2>No hay registros</h2></center>";
+                                    }
+
+                                }catch (Exception $e){
+                                    echo $e->getTrace();
+                                }
+                            }else{
+                                try{
+                                    $data = $objmodel->getAllItems();
+
+                                    if($data != false){
+                                        while($fila = $data->fetch_array(MYSQLI_NUM)){
+                                            echo "<tr>";
+                                            echo "{{reportEditButton}}";
+
+                                            foreach($fila as $value){
+                                                echo "<td>".$value."</td>";
+                                            }
+
+                                            echo "</tr>";
+                                        }
+                                    }else{
+                                        echo "<center><h2>No hay registros</h2></center>";
+                                    }
+
+                                }catch (Exception $e){
+                                    echo $e->getTrace();
+                                }
+                            }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/foundation/foundation.dropdown.js"></script>
+    <script src="../js/foundation/foundation.topbar.js"></script>
+    <!-- Other JS plugins can be included here -->
+
+    <script>
+        $(document).foundation();
+    </script>
+</body>
+</html>

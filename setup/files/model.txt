@@ -1,0 +1,228 @@
+<?php
+require_once("../core/ModuleInterface.php");
+require_once("../libs/QueryMap.php");
+require_once("../core/DBOMySQL.php");
+
+class {{model}} extends QueryMap implements ModuleInterface{
+
+    /*
+    / Variables del modelo (Campos en la tabla de la base de datos)
+    */
+    {{variables}}
+
+    private $DBO; // Data Base Object (Objeto de la base de datos)
+
+
+    /*
+    / Constructor de la clase
+    */
+    public function __construct(){
+        parent::__construct();
+
+    {{initialize}}
+
+        $this->DBO = new DBOMySQL();
+    }
+
+
+    /*
+    / Geter's de clase
+    */
+    public function __get($data){
+        return $this->$data;
+    }
+
+
+    /*
+    / Funcion:
+    /     Busca un elemento por ID (llave primaria) en la base de datos
+    / Prototipo:
+    /     bool function getItem( int $id );
+    / Parametros:
+    /     id -valor de la llave primaria del elemento que se desea obtener
+    */
+    public function getItem($id){
+        $data = $this->DBO->conx->prepare($this->list["get{{model}}"]);
+        $data->bind_param("s",$id);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                foreach($resp->fetch_assoc() as $key => $value){
+                    $this->$key = $value;
+                }
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+
+    /*
+    / Funcion:
+    /     Debuelve todos los registros de la tabla
+    / Prototipo:
+    /     bool | mysql_result function getAllItems();
+    / Parametros:
+    /     sin parametros
+    */
+    public function getAllItems(){
+        $data = $this->DBO->conx->prepare($this->list["getAll{{model}}"]);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                return $resp;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+
+    /*
+    / Funcion:
+    /     Insercion de un nuevo registro en la tabla
+    / Prototipo:
+    /     bool function setItem( array $data );
+    / Parametros:
+    /     data - arreglo con la relacion campo-dato para la incercion en la ytabla
+    */
+    public  function setItem($data = array()){
+        extract($data);
+
+        if( {{validate}} ){
+            $data = $this->DBO->conx->prepare($this->list["set{{model}}"]);
+            $data->bind_param("{{leters}}", {{inserts}} );
+
+            if($data->execute()){
+                $data->close();
+                return true;
+            }else{
+                $data->close();
+                throw new Exception("An error has occurred to execute the query");
+            }
+        }else{
+            throw new Exception("The data is not valid");
+        }
+
+    }
+
+
+    /*
+    / Funcion:
+    /     Elimina un elemento por ID (llave primaria) en la base de datos
+    / Prototipo:
+    /     bool function getItem( int $id );
+    / Parametros:
+    /     id -valor de la llave primaria del elemento que se desea eliminar
+    */
+    public function dropItem($id){
+        $data = $this->DBO->conx->prepare($this->list['drop{{model}}']);
+        $data->bind_param("s",$id);
+
+        if($data->execute()){
+            $data->close();
+            return true;
+        }else{
+            $data->close();
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+    public function updateItem($id,$data = array()){
+        extract($data);
+
+        if(is_numeric($id) && {{validateUpdate}}){
+            $data = $this->DBO->conx->prepare($this->list['update{{model}}']);
+            $data->bind_param("s{{leters}}", {{insertsUpdate}},$id);
+
+            if($data->execute()){
+                $data->close();
+                return true;
+            }else{
+                $data->close();
+                throw new Exception("An error has occurred to execute the query");
+            }
+        }else{
+            throw new Exception("The data is not valid");
+        }
+    }
+
+    /*
+    / Funcion:
+    /     Regresa el listado de campos pertenecientes a la tabla correspondiente de esta clase
+    / Prototipo:
+    /     bool | mysql_result function getAllItems();
+    / Parametros:
+    /     sin parametros
+    */
+    public function getColumns(){
+        $data = $this->DBO->conx->prepare($this->list["getColumns{{model}}"]);
+
+        if($data->execute()){
+            $resp = $data->get_result();
+            $data->close();
+
+            if($resp->num_rows > 0){
+                return $resp;
+            }else{
+                return false;
+            }
+        }else{
+            throw new Exception("An error has occurred to execute the query");
+        }
+    }
+
+    /*
+    / Funcion:
+    /     Regresa un filtrado de infomacion con respecto a campos y patron
+    / Prototipo:
+    /     bool | mysql_result function getAllItems();
+    / Parametros:
+    /     filter - Columna sobre la cual se buscara el patron
+    /     patern - Cadena a buscar en el campo o campos especificados
+    */
+    public function getFilter($filter, $patern){
+        if($filter == 'all'){
+            try{
+                $flag =true;
+                $evaluate = "";
+
+                $data = $this->getColumns();
+
+                while($col = $data->fetch_array(MYSQLI_NUM)){
+                    if($flag){
+                        $evaluate .= $col[0]." LIKE '%".$patern."%' ";
+                        $flag = false;
+                    }else{
+                        $evaluate .= " or ".$col[0]." LIKE '%".$patern."%' ";
+                    }
+                }
+
+                $this->DBO->initializeQuery("SELECT * FROM {{model}} WHERE ".$evaluate);
+                $result = $this->DBO->getRequest();
+
+                return $result;
+            }catch (Exception $e){
+                echo $e->getTrace();
+            }
+        }elseif(!empty($filter)){
+            $this->DBO->initializeQuery("SELECT * FROM {{model}} WHERE ".$filter." LIKE '%".$patern."%'");
+            $result = $this->DBO->getRequest();
+
+            return $result;
+        }else{
+            return $this->getAllItems();
+        }
+    }
+}

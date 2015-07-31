@@ -1,0 +1,19 @@
+        /*******************************************  {{table}} *******************************************/
+
+        $this->addArray($this->list,"get{{table}}",
+            "SELECT * FROM {{table}} WHERE {{primary}} = [[id]]");
+
+        $this->addArray($this->list,"getAll{{table}}",
+            "SELECT * FROM {{table}}");
+
+        $this->addArray($this->list,"set{{table}}",
+            "INSERT INTO {{table}} ({{varQuery}}) values ({{insertsQuery}})");
+
+        $this->addArray($this->list,"drop{{table}}",
+            "DELETE FROM {{table}} WHERE {{primary}} = [[id]]");
+
+        $this->addArray($this->list,"update{{table}}",
+            "UPDATE {{table}} SET {{seters}} WHERE {{primary}} = [[id]]");
+
+        $this->addArray($this->list,"getColumns{{table}}",
+            "SHOW COLUMNS FROM {{table}}");

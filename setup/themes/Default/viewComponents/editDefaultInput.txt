@@ -1,0 +1,6 @@
+<div class="row">
+    <div class="large-12 columns">
+        <label for="{{fila}}">{{fila}}</label>
+        <input type="text" name="{{fila}}" id="{{fila}}" value="<?php echo $instance->{{fila}}; ?>"/>
+    </div>
+</div>

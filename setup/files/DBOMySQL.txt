@@ -1,0 +1,115 @@
+<?php
+
+class DBOMySQL{
+
+	const HOST = "{{HOST}}"; // Servidor de la base de datos.
+	const USER = "{{USER}}"; // Usuario del servidor.
+	const PASS = "{{PASS}}"; // Contraseña de Usuario.
+    const DBAS = "{{DBAS}}"; // Nombre de la base de datos.
+
+    public $conx;           // Conexion a la base de datos.
+	private $query;          // Query a la base de datos.
+
+
+    /*
+    / Constructor de clase e inicializacion de la conexion.
+    */
+	public function __construct($conx = null){
+        try{
+            if($conx != null){
+                $this->conx = $conx ;
+            }else{
+                $this->conx = new mysqli(self::HOST,self::USER,self::PASS,self::DBAS);
+
+                if ($this->conx->connect_errno) {
+                    throw new Exception("Fallo al contenctar a MySQL: (" . $this->conx->connect_errno . ") " . $this->conx->connect_error);
+                }
+            }
+
+        }catch (Exception $e){
+            echo $e->getTrace();
+        }
+	}
+
+
+    public function initializeQuery($query, $replace = null){
+        if($replace != null){
+            foreach($replace as $key => $value){
+                $query = str_replace($key,$value,$query);
+            }
+
+        }
+
+        $this->query = $query;
+    }
+
+
+
+    /*
+    / Funcion:
+    /     Ejecucion de peticiones del tipo de alteracion, eliminacion y descripcion de tablas y registros en la base de datos
+    / Prototipo:
+    /     bool function sendRequest();
+    / Parametros:
+    /     Sin parametros
+    */
+    public function setRequest(){
+        try{
+            if($this->conx->query($this->query)){
+                return true;
+            }else{
+                return false;
+            }
+        }catch(Exception $e){
+            echo $e->getTrace();
+            return false;
+        }
+    }
+
+
+    /*
+    / Funcion:
+    /     Ejecucion de peticiones del tipo de alteracion, eliminacion y descripcion de tablas y registros en la base de datos
+    /     que genere algun tipo de respuesta.
+    / Prototipo:
+    /     mysql_result function insertQuery();
+    / Parametros:
+    /     Sin parametros
+    */
+    public function getRequest(){
+        try{
+            $data = $this->conx->query($this->query);
+
+            if($data->num_rows > 0){
+                return $data;
+            }else{
+                return null;
+            }
+        }catch(Exception $e){
+            echo $e->getTrace();
+            return null;
+        }
+    }
+
+
+    /*
+    / Funcion:
+    /     Cierra la conexion establecida
+    / Prototipo:
+    /     void function closeConexion();
+    / Parametros:
+    /     sin paramatros
+    */
+    public function closeConexion(){
+        $this->conx->close();
+    }
+
+
+    /*
+    / Destructor de la clase
+    */
+    public function __destruct(){
+        $this->closeConexion();
+    }
+
+}

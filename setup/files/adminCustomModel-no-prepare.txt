@@ -1,0 +1,182 @@
+<?php
+require_once("../core/AdminInterface.php");
+require_once("../libs/QueryMap.php");
+require_once("../core/DBOMySQL.php");
+
+class {{table}} extends QueryMap implements AdminInterface {
+
+    {{campos}}
+
+    private $conx;
+
+    public function __construct(&$conexion = null){
+        parent::__construct();
+
+        {{initialize}}
+
+        if($conexion == null){
+            $this->conx = new DBOMySQL();
+        }else{
+            $this->conx = $conexion;
+        }
+    }
+
+    public function __get($data){
+        return $this->$data;
+    }
+
+    public function getByUser($user){
+        $this->conx->initializeQuery($this->list['adminGetByUser'], array('[[llave1]]' => $user));
+        $result = $this->conx->getRequest();
+
+        if($result != null){
+            foreach($result->fetch_assoc() as $key => $value){
+                $this->$key = $value;
+            }
+
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function getByPass($pass){
+        $this->conx->initializeQuery($this->list['adminGetByPass'], array('[[llave2]]' => $pass));
+        $result = $this->conx->getRequest();
+
+        if($result != null){
+            foreach($result->fetch_assoc() as $key => $value){
+                $this->$key = $value;
+            }
+
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function getItem($id){
+        $this->conx->initializeQuery($this->list['adminGetAdmin'], array('[[id]]' => $id));
+        $result = $this->conx->getRequest();
+
+        if($result != null){
+            foreach($result->fetch_assoc() as $key => $value){
+                $this->$key = $value;
+            }
+
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function getAllItems(){
+        $this->conx->initializeQuery($this->list['adminGetAllAdmin']);
+        $result = $this->conx->getRequest();
+
+        return $result;
+    }
+
+    public function setItem($data = array()){
+        extract($data);
+
+        if( {{validates}} ){
+            $this->conx->initializeQuery($this->list['adminSetAdmin'], {{array-setadmin}});
+
+            if($this->conx->setRequest()){
+                return true;
+            }else{
+                throw new Exception("An error has occurred to execute the query");
+                return false;
+            }
+        }else{
+            throw new Exception("The data is not valid");
+            return false;
+        }
+    }
+
+    public function updateItem($id,$data = array()){
+        extract($data);
+
+        if(is_numeric($id) && {{validates}} ){
+            $this->conx->initializeQuery($this->list['adminUpdateItem'], {{array-updateadmin}});
+
+            if($this->conx->setRequest()){
+                return true;
+            }else{
+                throw new Exception("An error has occurred to execute the query");
+                return false;
+            }
+        }else{
+            throw new Exception("The data is not valid");
+            return false;
+        }
+    }
+
+    public function dropItem($id){
+        if(is_numeric($id)){
+            $this->conx->initializeQuery($this->list['adminDropAdmin'], array('[[id]]' => $id));
+
+            if($this->conx->setRequest()){
+                return true;
+            }else{
+                throw new Exception("An error has occurred to execute the query");
+                return false;
+            }
+        }else{
+            throw new Exception("The data is not valid");
+            return false;
+        }
+    }
+
+    public function getColumns(){
+        $this->conx->initializeQuery($this->list['getColumnsAdmin']);
+        $result = $this->conx->getRequest();
+
+        return $result;
+    }
+
+    /*
+    / Funcion:
+    /     Regresa un filtrado de infomacion con respecto a campos y patron
+    / Prototipo:
+    /     mysql_result function getAllItems();
+    / Parametros:
+    /     filter - Columna sobre la cual se buscara el patron
+    /     patern - Cadena a buscar en el campo o campos especificados
+    */
+    public function getFilter($filter, $patern){
+        if($filter == 'all'){
+            try{
+                $flag =true;
+                $evaluate = "";
+
+                $data = $this->getColumns();
+
+                while($col = $data->fetch_array(MYSQLI_NUM)){
+                    if($flag){
+                        $evaluate .= $col[0]." LIKE '%".$patern."%' ";
+                        $flag = false;
+                    }else{
+                        $evaluate .= " or ".$col[0]." LIKE '%".$patern."%' ";
+                    }
+                }
+
+                $this->conx->initializeQuery("SELECT * FROM {{table}} WHERE ".$evaluate);
+                $result = $this->conx->getRequest();
+
+                return $result;
+            }catch (Exception $e){
+                echo $e->getTrace();
+                return null;
+            }
+        }elseif(!empty($filter)){
+            $this->conx->initializeQuery("SELECT * FROM {{table}} WHERE ".$filter." LIKE '%".$patern."%'");
+            $result = $this->conx->getRequest();
+
+            return $result;
+        }else{
+            return $this->getAllItems();
+        }
+    }
+}

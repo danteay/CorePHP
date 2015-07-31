@@ -1,0 +1,34 @@
+<?php
+require_once("../models/{{table}}.php");
+
+class delete{{table}}Controller {
+
+    private $instance;
+    private $item;
+
+    public function __construct($item){
+        $this->instance = new {{table}}();
+        $this->item = $item;
+
+        $this->__init__();
+    }
+
+    public function __init__(){
+        if(is_numeric($this->item)){
+            try{
+                $this->instance->dropItem($this->item);
+                header("Location: ../views/report{{table}}.php");
+            }catch (Exception $e){
+                echo $e->getTraceAsString();
+            }
+        }else{
+            header("Location: ../views/report{{table}}.php");
+        }
+    }
+}
+
+if($_GET){
+    $obj =new delete{{table}}Controller($_GET['trim']);
+}else{
+    header("Location: ../views/report{{table}}.php");
+}

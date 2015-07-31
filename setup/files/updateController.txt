@@ -1,0 +1,30 @@
+<?php
+require_once("../models/{{tabla}}.php");
+
+class update{{tabla}}Controller {
+
+    private $data;
+    private $instance;
+
+    public function __construct($data = array()){
+        $this->data = $data;
+        $this->instance = new {{tabla}}();
+
+        $this->__init__();
+    }
+
+    public  function __init__(){
+        try{
+            $this->instance->updateItem($this->data['itemUpdate'],$this->data);
+            header("Location: ../views/report{{tabla}}.php");
+        }catch (Exception $e){
+            echo $e->getTraceAsString();
+        }
+    }
+}
+
+if($_POST){
+    $obj = new update{{tabla}}Controller($_POST);
+}else{
+    header("Location: ../views/report{{tabla}}.php");
+}

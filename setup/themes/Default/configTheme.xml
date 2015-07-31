@@ -1,0 +1,47 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!--
+@Theme Name: Default
+-->
+
+<components>
+
+    <general>
+        <navigation structure="../themes/Default/viewComponents/navigation.php"></navigation>
+    </general>
+
+    <views>
+        <indexview structure="../themes/Default/views/index.php"></indexview>
+
+        <homeview structure="../themes/Default/views/home.txt">
+
+            <listNavigation structure="../themes/Default/viewComponents/homeListNavigation.txt"></listNavigation>
+
+        </homeview>
+
+        <reportview structure="../themes/Default/views/report.txt">
+
+            <editbutton structure="../themes/Default/viewComponents/reportEditButton.txt" header="../themes/Default/viewComponents/reportEditHeader.txt"></editbutton>
+
+        </reportview>
+
+        <addview structure="../themes/Default/views/add.txt">
+
+            <dateinput structure="../themes/Default/viewComponents/addDateInput.txt"></dateinput>
+            <timeinput structure="../themes/Default/viewComponents/addTimeInput.txt"></timeinput>
+            <textarea structure="../themes/Default/viewComponents/addTextarea.txt"></textarea>
+            <defaultinput structure="../themes/Default/viewComponents/addDefaultInput.txt"></defaultinput>
+
+        </addview>
+
+        <editview structure="../themes/Default/views/edit.txt">
+
+            <dateinput structure="../themes/Default/viewComponents/editDateInput.txt"></dateinput>
+            <timeinput structure="../themes/Default/viewComponents/editTimeInput.txt"></timeinput>
+            <textarea structure="../themes/Default/viewComponents/editTextarea.txt"></textarea>
+            <defaultinput structure="../themes/Default/viewComponents/editDefaultInput.txt"></defaultinput>
+
+        </editview>
+    </views>
+
+</components>
