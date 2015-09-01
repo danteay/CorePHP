@@ -1,0 +1,25 @@
+<div class="fixed">
+	<nav class="top-bar" data-topbar role="navigation">
+		<ul class="title-area">
+			<li class="name">
+				<h1><a href="../../index.php">MySite</a></h1>
+			</li>
+			<li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+		</ul>
+
+		<section class="top-bar-section">
+			<ul class="left">
+				<li><a href="home.php">Inicio</a></li>
+			</ul>
+
+			<ul class="right">
+				<li class="has-dropdown">
+					<a href="#"><?php echo $_SESSION['admin']['nick']; ?></a>
+					<ul class="dropdown">
+						<li><a href="../controllers/loginController.php?sess=0">Cerrar sesión</a></li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+	</nav>
+</div>

@@ -1,0 +1,36 @@
+@import url(http://fonts.googleapis.com/css?family=Raleway);
+
+header{
+    width: 100%;
+    padding-top: 2em;
+    padding-bottom: 2em;
+    text-align: center;
+    background: rgba(180,0,0,0.7);
+}
+
+header h1, header h6 {
+    color: #FFF !important;
+    font-family: 'Raleway', sans-serif !important;
+}
+
+header h1{
+    font-size: 4em;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+main {
+    width: 100%;
+    min-height: calc(100% - 14em);
+}
+
+footer{
+    width: 100%;
+    min-height: 50px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+    overflow: hidden;
+    background: rgba(180,0,0,0.7);
+}
+
+p{ text-align: justify }

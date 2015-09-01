@@ -1,0 +1,94 @@
+<?php
+require_once("core/SessionUtils.php");
+
+$session = new SessionUtils();
+
+if(isset($_SESSION['admin']) && $_SESSION['admin'] != null){
+    header("Location: views/home.php");
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Login</title>
+
+    <link rel="stylesheet" href="css/foundation.min.css">
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/style-index.css">
+
+    <script src="js/vendor/modernizr.js"></script>
+</head>
+
+<body>
+    <div class="fixed">
+        <nav class="top-bar" data-topbar role="navigation">
+            <ul class="title-area">
+                <li class="name">
+                    <h1><a href="index.php">MySite</a></h1>
+                </li>
+                <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+            </ul>
+        </nav>
+    </div>
+
+
+    <?php if(isset($_GET['error'])){ ?>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert alert-danger" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <b>Error: </b>
+                    <?php
+                        switch($_GET['error']){
+                            case 202:
+                                echo "Las contraseñas no coninciden.";
+                                break;
+
+                            case 201:
+                                echo "No se encontro el usuario.";
+                                break;
+                        }
+                    ?>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+
+
+    <main>
+
+        <div class=" panel-login">
+            <form action="controllers/loginController.php" method="post">
+                <diw class="row">
+                    <div class="large-12 columns">
+                        <label for="llave1">Usuario</label>
+                        <input type="text" name="llave1" id="llave1">
+                    </div>
+                </diw>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <label for="llave2">Password</label>
+                        <input type="password" name="llave2" id="llave2">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="large-12 columns">
+                        <input type="submit" value="Ingresar" class="button tiny expand">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </main>
+
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/foundation.min.js"></script>
+    <script src="js/foundation/foundation.topbar.js"></script>
+    <script>
+        $(document).foundation();
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,8 @@
 <?php
 require_once("../../core/DirectoryUtils.php");
 
-class Install {
+class Install
+{
 
     private $DBO;
     private $configdb;
@@ -10,6 +11,7 @@ class Install {
     private $queryMap;
     private $theme_name;
     private $theme;
+    private $theme_path;
     private $viewGenerate;
     private $dir_to_copy;
 
@@ -18,6 +20,7 @@ class Install {
         $this->activePanel = false;
         $this->version = $configdb['version'];
         $this->theme_name = empty($configdb['theme']) ? "Default" : $configdb['theme'];
+        $this->theme_path = "../themes/".$this->theme_name."/";
 
         if(!empty($configdb['viewGenerate'])){
             $this->viewGenerate = explode("|",$configdb['viewGenerate']);
@@ -77,6 +80,7 @@ class Install {
     private function createModels(){
 
         $this->theme = new SimpleXMLElement(file_get_contents("../themes/".$this->theme_name."/configTheme.xml"));
+
         $this->dir_to_copy = "../themes/".$this->theme_name."/directoryToCopy";
 
         require_once("../../core/DBOMySQL.php");
@@ -328,13 +332,14 @@ class Install {
 
         $list = $this->createListHome();
 
-        $home = file_get_contents($this->theme->views->homeview['structure']);
+        $home = file_get_contents($this->theme_path.$this->theme->views->homeview['structure']);
+
         $home = str_replace("{{reports}}",$list,$home);
         file_put_contents("../../views/home.php",$home);
 
 
 
-        copy($this->theme->views->indexview['structure'],"../../index.php");
+        copy($this->theme_path.$this->theme->views->indexview['structure'],"../../index.php");
 
     }
 
@@ -383,7 +388,8 @@ class Install {
         $this->generateDefaultLogin();
         $list = $this->createListHome();
 
-        $home = file_get_contents($this->theme->views->homeview['structure']);
+        $home = file_get_contents($this->theme_path.$this->theme->views->homeview['structure']);
+
         $home = str_replace("{{reports}}",$list,$home);
         file_put_contents("../../views/home.php",$home);
 
@@ -399,7 +405,7 @@ class Install {
         $login = str_replace("{{adminmodel}}","thecore_defaultAdminTable",$login);
 
         file_put_contents("../../controllers/loginController.php",$login);
-        copy($this->theme->views->indexview['structure'],"../../index.php");
+        copy($this->theme_path.$this->theme->views->indexview['structure'],"../../index.php");
     }
 
 
@@ -410,16 +416,12 @@ class Install {
 
     private function createListHome(){
 
-        echo "<pre>";
-        var_dump($this->viewGenerate);
-        echo "</pre>";
-
         $this->DBO->initializeQuery("SHOW TABLES FROM ".$this->configdb['dbas']);
         $list = '';
         $flag = true;
         $cont = 0;
 
-        $structure = file_get_contents($this->theme->views->homeview->listNavigation['structure']);
+        $structure = file_get_contents($this->theme_path.$this->theme->views->homeview->listNavigation['structure']);
 
         try{
             $tables = $this->DBO->getRequest();
@@ -478,10 +480,11 @@ class Install {
 
     private function createReports($table, $contindex){
         if(!empty($table)){
-            $file = file_get_contents($this->theme->views->reportview['structure']);
+            $file = file_get_contents($this->theme_path.$this->theme->views->reportview['structure']);
 
-            $boton = file_get_contents($this->theme->views->reportview->editbutton['structure']);
-            $header = file_get_contents($this->theme->views->reportview->editbutton['header']);
+            $boton = file_get_contents($this->theme_path.$this->theme->views->reportview->editbutton['structure']);
+
+            $header = file_get_contents($this->theme_path.$this->theme->views->reportview->editbutton['header']);
 
             $boton = str_replace("{{tabla}}",$table,$boton);
 
@@ -522,10 +525,13 @@ class Install {
             $flag_date = false;
             $flag_time = false;
 
-            $date = file_get_contents($this->theme->views->addview->dateinput['structure']);
-            $time = file_get_contents($this->theme->views->addview->timeinput['structure']);
-            $text = file_get_contents($this->theme->views->addview->textarea['structure']);
-            $default = file_get_contents($this->theme->views->addview->defaultinput['structure']);
+            $date = file_get_contents($this->theme_path.$this->theme->views->addview->dateinput['structure']);
+
+            $time = file_get_contents($this->theme_path.$this->theme->views->addview->timeinput['structure']);
+
+            $text = file_get_contents($this->theme_path.$this->theme->views->addview->textarea['structure']);
+
+            $default = file_get_contents($this->theme_path.$this->theme->views->addview->defaultinput['structure']);
 
             $this->DBO->initializeQuery("SHOW COLUMNS FROM ".$table);
             try{
@@ -560,7 +566,8 @@ class Install {
                         }
                     }
 
-                    $add = file_get_contents($this->theme->views->addview['structure']);
+                    $add = file_get_contents($this->theme_path.$this->theme->views->addview['structure']);
+
                     $add = str_replace("{{tabla}}",$table,$add);
                     $add = str_replace("{{campos}}",$campos,$add);
 
@@ -595,10 +602,13 @@ class Install {
             $flag_date = false;
             $flag_time = false;
 
-            $date = file_get_contents($this->theme->views->editview->dateinput['structure']);
-            $time = file_get_contents($this->theme->views->editview->timeinput['structure']);
-            $text = file_get_contents($this->theme->views->editview->textarea['structure']);
-            $default = file_get_contents($this->theme->views->editview->defaultinput['structure']);
+            $date = file_get_contents($this->theme_path.$this->theme->views->editview->dateinput['structure']);
+
+            $time = file_get_contents($this->theme_path.$this->theme->views->editview->timeinput['structure']);
+
+            $text = file_get_contents($this->theme_path.$this->theme->views->editview->textarea['structure']);
+
+            $default = file_get_contents($this->theme_path.$this->theme->views->editview->defaultinput['structure']);
 
             $this->DBO->initializeQuery("SHOW COLUMNS FROM ".$table);
             try{
@@ -633,7 +643,8 @@ class Install {
                         }
                     }
 
-                    $add = file_get_contents($this->theme->views->editview['structure']);
+                    $add = file_get_contents($this->theme_path.$this->theme->views->editview['structure']);
+
                     $add = str_replace("{{tabla}}",$table,$add);
                     $add = str_replace("{{campos}}",$campos,$add);
 
@@ -666,7 +677,7 @@ class Install {
     }
 
     public function copyNavigation(){
-        copy($this->theme->general->navigation['structure'],"../../libs/navigation.php");
+        copy($this->theme_path.$this->theme->general->navigation['structure'],"../../libs/navigation.php");
     }
 
     private function createDeleteControllers($table = null){

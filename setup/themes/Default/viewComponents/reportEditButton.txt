@@ -1,1 +1,0 @@
-<td style='text-align:center;'><a href='edit{{tabla}}.php?edit=".$fila[$stat]."'><img src='../img/edit_icon.png' style='width: 12px; height: 12px; margin: 0 auto;'></a></td>

@@ -1,0 +1,51 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!--
+@Theme Name: Default
+-->
+
+<components>
+	<directives>
+		<name>Default</name>
+		<findfolder>NewDefault</findfolder>
+	</directives>
+
+	<general>
+		<navigation structure="viewComponents/navegacion.html"></navigation>
+	</general>
+
+	<views>
+		<indexview structure="views/index.html"></indexview>
+
+		<homeview structure="views/home.html">
+
+			<listNavigation structure="viewComponents/homeListNavigation.html"></listNavigation>
+
+		</homeview>
+
+		<reportview structure="views/reporte.html">
+
+			<editbutton structure="viewComponents/reportEditButton.html" header="viewComponents/reportEditHeader.html"></editbutton>
+
+		</reportview>
+
+		<addview structure="views/agregar.html">
+
+			<dateinput structure="viewComponents/addDateInput.html"></dateinput>
+			<timeinput structure="viewComponents/addTimeInput.html"></timeinput>
+			<textarea structure="viewComponents/addTextarea.html"></textarea>
+			<defaultinput structure="viewComponents/addDefaultInput.html"></defaultinput>
+
+		</addview>
+
+		<editview structure="views/editar.html">
+
+			<dateinput structure="viewComponents/editDateInput.html"></dateinput>
+			<timeinput structure="viewComponents/editTimeInput.html"></timeinput>
+			<textarea structure="viewComponents/editTextarea.html"></textarea>
+			<defaultinput structure="viewComponents/editDefaultInput.html"></defaultinput>
+
+		</editview>
+	</views>
+
+</components>

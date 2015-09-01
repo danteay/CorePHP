@@ -2,29 +2,33 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>TheCore-PHP Setup</title>
+    <title>CorePHP Setup</title>
 
     <link rel="stylesheet" href="css/foundation.min.css"/>
     <link rel="stylesheet" href="css/normalize.css"/>
+    <link rel="stylesheet" href="css/style.css">
 
     <script src="js/jquery-2.1.1.min.js"></script>
     <script src="js/foundation.min.js"></script>
-
-    <style>
-        p{ text-align: justify }
-    </style>
 </head>
 <body>
     <div class="fixed">
         <nav class="top-bar" data-topbar role="navigation">
-            <ul>
-                <li><a href="#"><img src="img/icon2.png" alt="The Core" style="height: 30px; width: auto; margin-top: 5px;"/></a></li>
+            <ul class="title-area">
+                <li class="name">
+                    <h1><a href="https://github.com/danteay/CorePHP">CorePHP</a></h1>
+                </li>
             </ul>
         </nav>
     </div>
 
     <header>
-        <img src="img/the-core-banner2.png" alt="" style="max-width: 100%; height: auto;"/>
+        <div class="row">
+            <div class="large-12 columns">
+                <h1>CorePHP</h1>
+                <h6>Una solución para la creación de plataformas de administración de una manera facil, rapida y segura.</h6>
+            </div>
+        </div>
     </header>
 
     <main>
@@ -179,7 +183,7 @@
         </div>
     </main>
 
-    <footer style="width: 100%; min-height: 100px; padding-top: 20px; padding-bottom: 10px; overflow: hidden; background-color: maroon"></footer>
+    <footer ></footer>
 
     <script src="js/foundation/foundation.topbar.js"></script>
     <script src="js/foundation/foundation.alert.js"></script>

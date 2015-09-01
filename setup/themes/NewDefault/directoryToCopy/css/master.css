@@ -1,0 +1,36 @@
+main{
+    padding: 2em;
+}
+
+.panel-home{
+    text-align: center;
+    font-size: 0.80em !important;
+    color: #008CBA;
+}
+
+.home-container{
+    padding: 2em;
+    height: 100%;    
+    overflow-y: auto;
+}
+
+.search-nav{
+    margin-bottom: 2em;
+}
+
+.responsive-table{
+    width: 100%;
+    max-height: 600px;
+    overflow-x: auto;
+    overflow-y: auto;
+}
+
+.rep-edit-btn{
+	text-align: center;
+}
+
+.rep-edit-btn img{
+	width: 12px;
+	height: 12px;
+	margin: 0 auto;
+}
