@@ -1,51 +1,76 @@
-<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE components SYSTEM "themedtd.dtd">
 
 <!--
 @Theme Name: Default
+@Athor: Dante - dante.aguilar41@gmail.com
 -->
 
 <components>
+
 	<directives>
 		<name>Default</name>
 		<findfolder>NewDefault</findfolder>
+
+		<makedirs>
+			<dir>actionsjs</dir>
+		</makedirs>
 	</directives>
 
 	<general>
-		<navigation structure="viewComponents/navegacion.html"></navigation>
+		<navigation structure="viewComponents/navegacion.html" />
+
+        <plugins>
+
+            <dateplugin css="" js="">
+                <activation actcode="viewComponents/dateplugin/actcode.html"/>
+            </dateplugin>
+
+            <timeplugin css="" js="">
+                <activation actcode="viewComponents/timeplugin/actcode.html"/>
+            </timeplugin>
+
+			<datetimeplugin css="viewComponents/datetimeplugin/css.html" js="viewComponents/datetimeplugin/js.html">
+				<activation actcode="viewComponents/datetimeplugin/actcode.html"/>
+			</datetimeplugin>
+
+        </plugins>
 	</general>
 
 	<views>
-		<indexview structure="views/index.html"></indexview>
+		<indexview structure="views/index.html" />
 
 		<homeview structure="views/home.html">
 
-			<listNavigation structure="viewComponents/homeListNavigation.html"></listNavigation>
+			<listNavigation structure="viewComponents/homeListNavigation.html" />
 
 		</homeview>
 
 		<reportview structure="views/reporte.html">
 
-			<editbutton structure="viewComponents/reportEditButton.html" header="viewComponents/reportEditHeader.html"></editbutton>
+			<editbutton structure="viewComponents/reportEditButton.html" header="viewComponents/reportEditHeader.html" />
 
 		</reportview>
 
 		<addview structure="views/agregar.html">
 
-			<dateinput structure="viewComponents/addDateInput.html"></dateinput>
-			<timeinput structure="viewComponents/addTimeInput.html"></timeinput>
-			<textarea structure="viewComponents/addTextarea.html"></textarea>
-			<defaultinput structure="viewComponents/addDefaultInput.html"></defaultinput>
+			<adddateinput structure="viewComponents/addDefaultInput.html" />
+			<addtimeinput structure="viewComponents/addDefaultInput.html" />
+			<addtextarea structure="viewComponents/addTextarea.html" />
+			<adddefaultinput structure="viewComponents/addDefaultInput.html" />
+			<adddatetimeinput structure="viewComponents/addDefaultInput.html" />
 
 		</addview>
 
 		<editview structure="views/editar.html">
 
-			<dateinput structure="viewComponents/editDateInput.html"></dateinput>
-			<timeinput structure="viewComponents/editTimeInput.html"></timeinput>
-			<textarea structure="viewComponents/editTextarea.html"></textarea>
-			<defaultinput structure="viewComponents/editDefaultInput.html"></defaultinput>
+			<editdateinput structure="viewComponents/editDefaultInput.html" />
+			<edittimeinput structure="viewComponents/editDefaultInput.html" />
+			<edittextarea structure="viewComponents/editTextarea.html" />
+			<editdefaultinput structure="viewComponents/editDefaultInput.html" />
+			<editdatetimeinput structure="viewComponents/editDefaultInput.html" />
 
 		</editview>
 	</views>
 
 </components>
+

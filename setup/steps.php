@@ -156,8 +156,8 @@
 
                     <div class="row">
                         <div class="large-12 columns">
-                            <label for=""><input name="version" type="radio" value="1" checked/> Version con sentencias preparadas.</label>
-                            <label for=""><input name="version" type="radio" value="2"/> Version sin sentencias preparadas.</label>
+                            <label for="ver1"><input id="ver1" name="version" type="radio" value="1" checked/> Version con sentencias preparadas.</label>
+                            <label for="ver2"><input id="ver2" name="version" type="radio" value="2"/> Version sin sentencias preparadas.</label>
                         </div>
                     </div>
 

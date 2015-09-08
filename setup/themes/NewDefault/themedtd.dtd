@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!ELEMENT components (directives,general,views)>
+
+<!ELEMENT directives (name,findfolder,makedirs)>
+
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT findfolder (#PCDATA)>
+    <!ELEMENT makedirs (dir*)>
+
+        <!ELEMENT dir (#PCDATA)>
+
+<!ELEMENT general (navigation, footer?, plugins?)>
+
+    <!ELEMENT navigation EMPTY>
+    <!ATTLIST navigation structure CDATA #REQUIRED>
+
+    <!ELEMENT footer EMPTY>
+    <!ATTLIST footer structure CDATA #REQUIRED>
+
+    <!ELEMENT plugins (dateplugin?,timeplugin?,datetimeplugin?)>
+
+        <!ELEMENT dateplugin (activation?)>
+        <!ATTLIST dateplugin css CDATA #REQUIRED>
+        <!ATTLIST dateplugin js CDATA #REQUIRED>
+
+        <!ELEMENT timeplugin (activation?)>
+        <!ATTLIST timeplugin css CDATA #REQUIRED>
+        <!ATTLIST timeplugin js CDATA #REQUIRED>
+
+        <!ELEMENT datetimeplugin (activation?)>
+        <!ATTLIST datetimeplugin css CDATA #REQUIRED>
+        <!ATTLIST datetimeplugin js CDATA #REQUIRED>
+
+            <!ELEMENT activation EMPTY>
+            <!ATTLIST activation actcode CDATA #REQUIRED>
+
+<!ELEMENT views (indexview,homeview,reportview,addview,editview)>
+
+    <!ELEMENT indexview EMPTY>
+    <!ATTLIST indexview structure CDATA #REQUIRED>
+
+    <!ELEMENT homeview (listNavigation)>
+    <!ATTLIST homeview structure CDATA #REQUIRED>
+
+        <!ELEMENT listNavigation EMPTY>
+        <!ATTLIST listNavigation structure CDATA #REQUIRED>
+
+    <!ELEMENT reportview (editbutton)>
+    <!ATTLIST reportview structure CDATA #REQUIRED>
+
+        <!ELEMENT editbutton EMPTY>
+        <!ATTLIST editbutton structure CDATA #REQUIRED>
+        <!ATTLIST editbutton header CDATA #REQUIRED>
+
+    <!ELEMENT addview (adddateinput,addtimeinput,addtextarea,adddefaultinput,adddatetimeinput)>
+    <!ATTLIST addview structure CDATA #REQUIRED>
+
+        <!ELEMENT adddateinput EMPTY>
+        <!ATTLIST adddateinput structure CDATA #REQUIRED>
+
+        <!ELEMENT addtimeinput EMPTY>
+        <!ATTLIST addtimeinput structure CDATA #REQUIRED>
+
+        <!ELEMENT addtextarea EMPTY>
+        <!ATTLIST addtextarea structure CDATA #REQUIRED>
+
+        <!ELEMENT adddefaultinput EMPTY>
+        <!ATTLIST adddefaultinput structure CDATA #REQUIRED>
+
+        <!ELEMENT adddatetimeinput EMPTY>
+        <!ATTLIST adddatetimeinput structure CDATA #REQUIRED>
+
+    <!ELEMENT editview (editdateinput,edittimeinput,edittextarea,editdefaultinput,editdatetimeinput)>
+    <!ATTLIST editview structure CDATA #REQUIRED>
+
+        <!ELEMENT editdateinput EMPTY>
+        <!ATTLIST editdateinput structure CDATA #REQUIRED>
+
+        <!ELEMENT edittimeinput EMPTY>
+        <!ATTLIST edittimeinput structure CDATA #REQUIRED>
+
+        <!ELEMENT edittextarea EMPTY>
+        <!ATTLIST edittextarea structure CDATA #REQUIRED>
+
+        <!ELEMENT editdefaultinput EMPTY>
+        <!ATTLIST editdefaultinput structure CDATA #REQUIRED>
+
+        <!ELEMENT editdatetimeinput EMPTY>
+        <!ATTLIST editdatetimeinput structure CDATA #REQUIRED>

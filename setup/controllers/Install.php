@@ -262,9 +262,16 @@ class Install
             $this->createDefault();
         }
 
+        if($this->activePanel == 'default' || $this->activePanel == 'custom'){
+            $this->createThemeDirectorys();
+        }
+
         $this->queryMap = str_replace("{{querys}}",$totalQuery,$this->queryMap);
         file_put_contents("../../libs/QueryMap.php",$this->queryMap);
         chmod("../../libs/QueryMap.php",0777);
+
+
+
 
 
         #------------------------------------------------------------------------------------------
@@ -276,17 +283,17 @@ class Install
             case "default":
                 $this->copyThemeFiles();
                 $this->copyNavigation();
-                header("Location: ../steps.php?error=0&ad=true");
+                #header("Location: ../steps.php?error=0&ad=true");
                 break;
 
             case "custom":
                 $this->copyThemeFiles();
                 $this->copyNavigation();
-                header("Location: ../steps.php?error=0&ad=true&custom");
+                #header("Location: ../steps.php?error=0&ad=true&custom");
                 break;
 
             default:
-                header("Location: ../steps.php?error=0");
+                #header("Location: ../steps.php?error=0");
                 break;
         }
     }
@@ -468,16 +475,6 @@ class Install
 
     }
 
-    private function createUpdateControllers($tabla = null){
-        if(!empty($tabla)){
-            $file = file_get_contents("../files/updateController.txt");
-
-            $file = str_replace("{{tabla}}",$tabla,$file);
-
-            file_put_contents("../../controllers/update".$tabla."Controller.php",$file);
-        }
-    }
-
     private function createReports($table, $contindex){
         if(!empty($table)){
             $file = file_get_contents($this->theme_path.$this->theme->views->reportview['structure']);
@@ -502,36 +499,33 @@ class Install
         }
     }
 
-    private function createAddControllers($table = null){
-        if(!empty($table)){
-            $file = file_get_contents("../files/addController.txt");
-
-            $file = str_replace("{{tabla}}",$table,$file);
-
-            file_put_contents("../../controllers/add".$table."Controller.php",$file);
-        }
-    }
-
     private function createAdds($table = null){
         if(!empty($table)){
             $campos = "";
 
-            $date_plugin = "<link rel='stylesheet' href='../js/date-picker/public/css/bootstrap.css'/>\n\t\t<script src='../js/date-picker/public/javascript/zebra_datepicker.js'></script>";
-            $time_plugin = "<link rel='stylesheet' href='../js/time-picker/jquery.timepicker.css'/>\n\t\t<script src='../js/time-picker/jquery.timepicker.min.js'></script>";
+            $date_plugin = "";
+            $time_plugin = "";
+            $datetime_plugin = "";
 
-            $time_actives = "";
+            $flag_plugin_date = false;
+            $flag_plugin_time = false;
+            $flag_plugin_datetime = false;
+
+            $this->validateExistPlugins($date_plugin,$time_plugin,$datetime_plugin,$flag_plugin_date,$flag_plugin_time,$flag_plugin_datetime);
+
             $date_actives = "";
+            $time_actives = "";
+            $datetime_actives = "";
 
             $flag_date = false;
             $flag_time = false;
+            $flag_datetime = false;
 
-            $date = file_get_contents($this->theme_path.$this->theme->views->addview->dateinput['structure']);
-
-            $time = file_get_contents($this->theme_path.$this->theme->views->addview->timeinput['structure']);
-
-            $text = file_get_contents($this->theme_path.$this->theme->views->addview->textarea['structure']);
-
-            $default = file_get_contents($this->theme_path.$this->theme->views->addview->defaultinput['structure']);
+            $date = file_get_contents($this->theme_path.$this->theme->views->addview->adddateinput['structure']);
+            $time = file_get_contents($this->theme_path.$this->theme->views->addview->addtimeinput['structure']);
+            $text = file_get_contents($this->theme_path.$this->theme->views->addview->addtextarea['structure']);
+            $default = file_get_contents($this->theme_path.$this->theme->views->addview->adddefaultinput['structure']);
+            $datetime = file_get_contents($this->theme_path.$this->theme->views->addview->adddatetimeinput['structure']);
 
             $this->DBO->initializeQuery("SHOW COLUMNS FROM ".$table);
             try{
@@ -541,25 +535,42 @@ class Install
                     while($fila = $data->fetch_array(MYSQLI_NUM)){
                         if($fila[3] != 'PRI'){
                             switch($fila[1]){
-                                case 'date':
+                                case "date":
+
                                     $campos .= str_replace("{{fila}}",$fila[0],$date);
 
-                                    $date_actives .= "\n$('#".$fila[0]."').Zebra_DatePicker();";
-                                    $flag_date = true;
+                                    $flag_date = $flag_plugin_date ? true : false;
+
+                                    $date_actives .= $this->validateActivationPlugin($this->theme->general->plugins->dateplugin,$fila[0]);
+
                                     break;
 
-                                case 'time':
+                                case "time":
+
                                     $campos .= str_replace("{{fila}}",$fila[0],$time);
 
-                                    $time_actives .= "\n$('#".$fila[0]."').timepicker({ 'timeFormat': 'H:i:s' });";
-                                    $flag_time = true;
+                                    $flag_time = $flag_plugin_time ? true : false;
+
+                                    $time_actives .= $this->validateActivationPlugin($this->theme->general->plugins->timeplugin,$fila[0]);
+
                                     break;
 
-                                case 'text':
+                                case "datetime":
+                                    $campos .= str_replace("{{fila}}",$fila[0],$datetime);
+
+                                    $flag_datetime = $flag_plugin_datetime ? true : false;
+
+                                    $datetime_actives .= $this->validateActivationPlugin($this->theme->general->plugins->datetimeplugin,$fila[0]);
+
+                                    break;
+
+                                case "text":
+
                                     $campos .= str_replace("{{fila}}",$fila[0],$text);
                                     break;
 
                                 default:
+
                                     $campos .= str_replace("{{fila}}",$fila[0],$default);
                                     break;
                             }
@@ -581,6 +592,11 @@ class Install
                         $add = str_replace("<!--time_actives-->",$time_actives,$add);
                     }
 
+                    if($flag_datetime){
+                        $add = str_replace("<!--datetime_plugin-->",$datetime_plugin,$add);
+                        $add = str_replace("<!--datetime_actives-->",$datetime_actives,$add);
+                    }
+
                     file_put_contents("../../views/add".$table.".php",$add);
                 }
             }catch (Exception $e){
@@ -593,22 +609,29 @@ class Install
         if(!empty($table)){
             $campos = "";
 
-            $date_plugin = "<link rel='stylesheet' href='../js/date-picker/public/css/bootstrap.css'/>\n\t\t<script src='../js/date-picker/public/javascript/zebra_datepicker.js'></script>";
-            $time_plugin = "<link rel='stylesheet' href='../js/time-picker/jquery.timepicker.css'/>\n\t\t<script src='../js/time-picker/jquery.timepicker.min.js'></script>";
+            $date_plugin = "";
+            $time_plugin = "";
+            $datetime_plugin = "";
+
+            $flag_plugin_date = false;
+            $flag_plugin_time = false;
+            $flag_plugin_datetime = false;
+
+            $this->validateExistPlugins($date_plugin,$time_plugin,$datetime_plugin,$flag_plugin_date,$flag_plugin_time,$flag_plugin_datetime);
 
             $time_actives = "";
             $date_actives = "";
+            $datetime_actives = "";
 
             $flag_date = false;
             $flag_time = false;
+            $flag_datetime = false;
 
-            $date = file_get_contents($this->theme_path.$this->theme->views->editview->dateinput['structure']);
-
-            $time = file_get_contents($this->theme_path.$this->theme->views->editview->timeinput['structure']);
-
-            $text = file_get_contents($this->theme_path.$this->theme->views->editview->textarea['structure']);
-
-            $default = file_get_contents($this->theme_path.$this->theme->views->editview->defaultinput['structure']);
+            $date = file_get_contents($this->theme_path.$this->theme->views->editview->editdateinput['structure']);
+            $time = file_get_contents($this->theme_path.$this->theme->views->editview->edittimeinput['structure']);
+            $text = file_get_contents($this->theme_path.$this->theme->views->editview->edittextarea['structure']);
+            $default = file_get_contents($this->theme_path.$this->theme->views->editview->editdefaultinput['structure']);
+            $datetime = file_get_contents($this->theme_path.$this->theme->views->editview->editdatetimeinput['structure']);
 
             $this->DBO->initializeQuery("SHOW COLUMNS FROM ".$table);
             try{
@@ -621,15 +644,25 @@ class Install
                                 case 'date':
                                     $campos .= str_replace("{{fila}}",$fila[0],$date);
 
-                                    $date_actives .= "\n$('#".$fila[0]."').Zebra_DatePicker();";
-                                    $flag_date = true;
+                                    $flag_date = $flag_plugin_date ? true : false;
+
+                                    $date_actives .= $this->validateActivationPlugin($this->theme->general->plugins->dateplugin,$fila[0]);
                                     break;
 
                                 case 'time':
                                     $campos .= str_replace("{{fila}}",$fila[0],$time);
 
-                                    $time_actives .= "\n$('#".$fila[0]."').timepicker({ 'timeFormat': 'H:i:s' });";
-                                    $flag_time = true;
+                                    $flag_time = $flag_plugin_time ? true : false;
+
+                                    $time_actives .= $this->validateActivationPlugin($this->theme->general->plugins->timeplugin,$fila[0]);
+                                    break;
+
+                                case "datetime":
+                                    $campos .= str_replace("{{fila}}",$fila[0],$datetime);
+
+                                    $flag_datetime = $flag_plugin_datetime ? true : false;
+
+                                    $datetime_actives .= $this->validateActivationPlugin($this->theme->general->plugins->datetimeplugin,$fila[0]);
                                     break;
 
                                 case 'text':
@@ -658,6 +691,11 @@ class Install
                         $add = str_replace("<!--time_actives-->",$time_actives,$add);
                     }
 
+                    if($flag_datetime){
+                        $add = str_replace("<!--datetime_plugin-->",$datetime_plugin,$add);
+                        $add = str_replace("<!--datetime_actives-->",$datetime_actives,$add);
+                    }
+
                     file_put_contents("../../views/edit".$table.".php",$add);
                 }
             }catch (Exception $e){
@@ -665,6 +703,48 @@ class Install
             }
         }
     }
+
+
+    #-------------------------------------------------------------------------------------------------------------------
+    #                                       MAKE CONTROLLERS FUNCTIONS
+    #-------------------------------------------------------------------------------------------------------------------
+
+
+    private function createDeleteControllers($table = null){
+        if(!empty($table)){
+            $file = file_get_contents("../files/deleteController.txt");
+
+            $file = str_replace("{{table}}",$table,$file);
+
+            file_put_contents("../../controllers/delete".$table."Controller.php",$file);
+        }
+    }
+
+    private function createAddControllers($table = null){
+        if(!empty($table)){
+            $file = file_get_contents("../files/addController.txt");
+
+            $file = str_replace("{{tabla}}",$table,$file);
+
+            file_put_contents("../../controllers/add".$table."Controller.php",$file);
+        }
+    }
+
+    private function createUpdateControllers($tabla = null){
+        if(!empty($tabla)){
+            $file = file_get_contents("../files/updateController.txt");
+
+            $file = str_replace("{{tabla}}",$tabla,$file);
+
+            file_put_contents("../../controllers/update".$tabla."Controller.php",$file);
+        }
+    }
+
+
+    #-------------------------------------------------------------------------------------------------------------------
+    #                              COPY THEME FILES, GENERAL FILES AND MAKE DIRECTORIES
+    #-------------------------------------------------------------------------------------------------------------------
+
 
     private function copyThemeFiles(){
         $obj_depend = new DirectoryUtils();
@@ -676,19 +756,27 @@ class Install
         }
     }
 
+    private function createThemeDirectorys(){
+        if(isset($this->theme->directives->makedirs->dir) && count($this->theme->directives->makedirs->dir) > 0){
+            $objdir = new DirectoryUtils();
+
+            foreach($this->theme->directives->makedirs->dir as $value){
+                $objdir->MakeDir("../../".$value);
+            }
+
+            unset($objdir);
+        }
+    }
+
     public function copyNavigation(){
         copy($this->theme_path.$this->theme->general->navigation['structure'],"../../libs/navigation.php");
     }
 
-    private function createDeleteControllers($table = null){
-        if(!empty($table)){
-            $file = file_get_contents("../files/deleteController.txt");
 
-            $file = str_replace("{{table}}",$table,$file);
+    #-------------------------------------------------------------------------------------------------------------------
+    #                                               TYPING AND VALIDATIONS
+    #-------------------------------------------------------------------------------------------------------------------
 
-            file_put_contents("../../controllers/delete".$table."Controller.php",$file);
-        }
-    }
 
     private function createValidate($case,$var,$nulable){
         if(preg_match("/int/",$case) || preg_match("/integer/",$case) || preg_match("/smallint/",$case) || preg_match("/tinyint/",$case) || preg_match("/decimal/",$case) || preg_match("/dec/",$case) || preg_match("/numeric/",$case) || preg_match("/mediumint/",$case) || preg_match("/bigint/",$case) || preg_match("/real/",$case) || preg_match("/float/",$case) || preg_match("/double/",$case) || preg_match("/precision/",$case)){
@@ -711,6 +799,49 @@ class Install
             return $var." = [[".$var."]]";
         }else{
             return $var." = '[[".$var."]]'";
+        }
+    }
+
+    private function validateStructurePlugin($plugin){
+        $tags = "";
+
+        if(isset($plugin['css']) && isset($plugin['js'])){
+            if(!empty($plugin['css'])){
+                $tags .= file_get_contents($this->theme_path.$plugin['css']);
+            }
+            if(!empty($plugin['js'])){
+                $tags .= "\n\t\t".file_get_contents($this->theme_path.$plugin['js']);
+            }
+        }
+
+        return $tags;
+    }
+
+    private function validateActivationPlugin($plugin,$target){
+        if(isset($plugin->activation)){
+            $actcode = file_get_contents($this->theme_path.$plugin->activation['actcode']);
+            $actcode = str_replace('{{fila}}',$target,$actcode);
+
+            return "\n".$actcode;
+        }else{
+            return "";
+        }
+    }
+
+    private function validateExistPlugins(&$date_plugin,&$time_plugin,&$datetime_plugin,&$flag_plugin_date,&$flag_plugin_time,&$flag_plugin_datetime){
+        if(isset($this->theme->general->plugins->dateplugin)){
+            $flag_plugin_date = true;
+            $date_plugin = $this->validateStructurePlugin($this->theme->general->plugins->dateplugin);
+        }
+
+        if(isset($this->theme->general->plugins->timeplugin)){
+            $flag_plugin_time = true;
+            $time_plugin = $this->validateStructurePlugin($this->theme->general->plugins->timeplugin);
+        }
+
+        if(isset($this->theme->general->plugins->datetimeplugin)){
+            $flag_plugin_datetime = true;
+            $datetime_plugin = $this->validateStructurePlugin($this->theme->general->plugins->datetimeplugin);
         }
     }
 
