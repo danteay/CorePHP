@@ -27,7 +27,7 @@
     <header>
         <div class="row">
             <div class="large-12 columns">
-                <h1>CorePHP <small>Versión: 2.7</small></h1>
+                <h1>CorePHP <small>Versión: 3.0</small></h1>
                 <h6>Una solución para la creación de plataformas de administración de una manera facil, rapida y segura.</h6>
             </div>
         </div>
