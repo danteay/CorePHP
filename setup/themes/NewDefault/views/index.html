@@ -1,12 +1,4 @@
-<?php
-require_once("core/SessionUtils.php");
-
-$session = new SessionUtils();
-
-if(isset($_SESSION['admin']) && $_SESSION['admin'] != null){
-    header("Location: views/home.php");
-}
-?>
+<!--index_session_validate-->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,30 +26,18 @@ if(isset($_SESSION['admin']) && $_SESSION['admin'] != null){
     </div>
 
 
-    <?php if(isset($_GET['error'])){ ?>
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="alert alert-danger" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <b>Error: </b>
-                    <?php
-                        switch($_GET['error']){
-                            case 202:
-                                echo "Las contraseñas no coninciden.";
-                                break;
+    <main>
 
-                            case 201:
-                                echo "No se encontro el usuario.";
-                                break;
-                        }
-                    ?>
+        <!--if_error-->
+            <div class="row">
+                <div class="large-12 columns">
+                    <div data-alert class="alert-box alert">
+                        <!--index_error_case-->
+                        <a href="#" class="close">&times;</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    <?php } ?>
-
-
-    <main>
+        <!--end_if_error-->
 
         <div class=" panel-login">
             <form action="controllers/loginController.php" method="post">

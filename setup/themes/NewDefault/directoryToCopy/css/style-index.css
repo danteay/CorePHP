@@ -1,10 +1,13 @@
-main{
-    min-height: 100%;
-    position: relative;
-    background-image: url(../img/wallpaper_login.jpg);
+body{
+    background-image: url('../img/wallpaper_login.jpg');
     background-attachment: fixed;
     background-size: cover;
     background-repeat: no-repeat;
+}
+
+main{
+    min-height: 100%;
+    position: relative;
 }
 
 .panel-login{

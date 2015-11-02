@@ -2,7 +2,7 @@
 
 <!--
 @Theme Name: Default
-@Athor: Dante - dante.aguilar41@gmail.com
+@Author: Dante - dante.aguilar41@gmail.com
 -->
 
 <components>
@@ -33,7 +33,17 @@
 				<activation actcode="viewComponents/datetimeplugin/actcode.html"/>
 			</datetimeplugin>
 
+
+			<validateplugin css="" js="viewComponents/jsvalidations/jsplugin.html" structure="viewComponents/jsvalidations/structure.html">
+				<addmodal js="viewComponents/jsvalidations/jsaddvalidate.html" folder="actionsjs" validate="viewComponents/jsvalidations/addjsstructure.js" />
+
+				<editmodal js="viewComponents/jsvalidations/jseditvalidate.html" folder="actionsjs" validate="viewComponents/jsvalidations/editjsstructure.js" />
+
+				<activation actcode="viewComponents/jsvalidations/actcode.js" />
+			</validateplugin>
+
         </plugins>
+
 	</general>
 
 	<views>

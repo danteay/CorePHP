@@ -25,7 +25,7 @@
     <header>
         <div class="row">
             <div class="large-12 columns">
-                <h1>CorePHP</h1>
+                <h1>CorePHP <small>Versión: 4.0</small></h1>
                 <h6>Una solución para la creación de plataformas de administración de una manera facil, rapida y segura.</h6>
             </div>
         </div>
@@ -36,7 +36,7 @@
         if(isset($_GET['error']) && $_GET['error'] == 201){
             ?>
             <div data-alert class="alert-box alert" id="Alert"> <!-- Your content goes here -->
-                Ocurrio un error en la instalacion.
+                Ocurrio un error en la instalación.
                 <a onclick="$('#Alert').css('display','none');" class="close">&times;</a>
             </div>
         <?php
@@ -110,12 +110,12 @@
                 </p>
 
                 <p>
-                    Una vez terminada la instalación de los datos del servidor usted ya contara con el archivo de conexión, los modelos de las tablas y el archivo QueryMap.php el cual contara
+                    Una vez terminada la instalación de los datos del servidor usted ya contara con el archivo de conexión, los modelos de las tablas y el archivo /libs/QueryMap.php el cual contara
                     con las sentencias básicas de SQL que se requieren para el funcionamiento de su aplicación las cuales serán:
                     <br/>
 
                     <ul>
-                        <li>Selección de un elemento por id: <code>SELECT * FROM {table} where {clave-primaria} = ?</code></li>
+                        <li>Selección de un elemento por id: <code>SELECT * FROM {tabla} where {clave-primaria} = ?</code></li>
                         <li>Selección de todos los elementos de una tabla: <code>SELECT * FROM {tabla}</code></li>
                         <li>Inserción de un registro en una tabla: <code>INSERT INTO {tabla} ( {campos} ) VALUES (?,?,...)</code></li>
                         <li>Eliminación de un elemento por id: <code>DELETE FROM {tabla} WHERE {clave-primaria} = ? </code></li>

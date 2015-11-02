@@ -1,0 +1,7 @@
+<?php
+require_once("../libs/Validations.php");
+
+$validate = new Validations();
+
+$validate->sessionValidate();
+?>

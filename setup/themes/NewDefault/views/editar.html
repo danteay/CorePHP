@@ -1,13 +1,5 @@
-<?php
-require_once("../libs/Validations.php");
-require_once("../models/{{tabla}}.php");
+<!--edit_session_validate-->
 
-$validate = new Validations();
-$instance = new {{tabla}}();
-
-$validate->sessionValidate();
-$validate->editItemValidate($instance);
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,11 +17,12 @@ $validate->editItemValidate($instance);
     <!--date_plugin-->
     <!--time_plugin-->
     <!--datetime_plugin-->
+    <!--modal_plugin_css-->
 </head>
 
 <body>
 
-    <?php include("../libs/navigation.php"); ?>
+    <!--main_navigation-->
 
     <main class="">
 
@@ -52,8 +45,8 @@ $validate->editItemValidate($instance);
                         <!-- Right Nav Section -->
                         <ul class="right">
                             <li><a href="report{{tabla}}.php">Cancelar</a></li>
-                            <li><a href="../controllers/delete{{tabla}}Controller.php?trim=<?php echo $_GET['edit']; ?>">Eliminar</a></li>
-                            <li class="active"><a onclick="document.editform.submit();" id="send-editform" href="#">Guardar cambios</a></li>
+                            <li><a href="../controllers/delete{{tabla}}Controller.php?trim=<!--edit_index-->">Eliminar</a></li>
+                            <li class="active"><a id="send-editform" href="#">Guardar cambios</a></li>
                         </ul>
                     </section>
                 </nav>
@@ -67,16 +60,19 @@ $validate->editItemValidate($instance);
                     <form name="editform" action="../controllers/update{{tabla}}Controller.php" method="post">
                         {{campos}}
 
-                        <input type="hidden" name="itemUpdate" value="<?php echo $_GET['edit']; ?>"/>
+                        <input type="hidden" name="itemUpdate" value="<!--edit_index-->"/>
                     </form>
                 </div>
             </div>
         </div>
     </main>
 
+    <!--modal_structure-->
 
     <script src="../js/foundation.min.js"></script>
     <script src="../js/foundation/foundation.topbar.js"></script>
+    <!--modal_plugin_js-->
+    <!--jsvalidation_editplugin-->
 
     <script>
         $(document).foundation();

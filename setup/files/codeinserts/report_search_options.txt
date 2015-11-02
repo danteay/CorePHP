@@ -1,0 +1,12 @@
+<option value="all">Todas</option>
+<?php
+    try{
+        $columns = $objmodel->getColumns();
+
+        while($col = $columns->fetch_array(MYSQLI_NUM)){
+            echo "<option value='".$col[0]."'>".$col[0]."</option>";
+        }
+    }catch (Exception $e){
+        echo $e->getTrace();
+    }
+?>

@@ -1,0 +1,47 @@
+<?php
+    if(isset($_POST['columnFilter']) && isset($_POST['buscar'])){
+        try{
+            $data = $objmodel->getFilter($_POST['columnFilter'],"%".$_POST['buscar']."%");
+
+            if($data != false){
+                while($fila = $data->fetch_array(MYSQLI_NUM)){
+                    echo "<tr>";
+                    echo "{{reportEditButton}}";
+
+                    foreach($fila as $value){
+                        echo "<td>".$value."</td>";
+                    }
+
+                    echo "</tr>";
+                }
+            }else{
+                echo "<center><h2>No hay registros</h2></center>";
+            }
+
+        }catch (Exception $e){
+            echo $e->getTrace();
+        }
+    }else{
+        try{
+            $data = $objmodel->getAllItems();
+
+            if($data != false){
+                while($fila = $data->fetch_array(MYSQLI_NUM)){
+                    echo "<tr>";
+                    echo "{{reportEditButton}}";
+
+                    foreach($fila as $value){
+                        echo "<td>".$value."</td>";
+                    }
+
+                    echo "</tr>";
+                }
+            }else{
+                echo "<div class='text-center'><h2>No hay registros</h2></div>";
+            }
+
+        }catch (Exception $e){
+            echo $e->getTrace();
+        }
+    }
+?>

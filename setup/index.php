@@ -27,25 +27,13 @@
     <header>
         <div class="row">
             <div class="large-12 columns">
-                <h1>CorePHP <small>Versión: 3.0</small></h1>
+                <h1>CorePHP <small>Versión: 4.0</small></h1>
                 <h6>Una solución para la creación de plataformas de administración de una manera facil, rapida y segura.</h6>
             </div>
         </div>
     </header>
 
     <main>
-        <?php
-        if(isset($_GET['errorManager']) && $_GET['errorManager'] == 1){
-            ?>
-            <div data-alert class="alert-box alert" id="Alert"> <!-- Your content goes here -->
-                Para instalar el Managar de TheCore en necesario primero instalar el framework. De click en la opcion <em>Framework Install</em> para intalarlo.
-                <a onclick="$('#Alert').css('display','none');" class="close">&times;</a>
-            </div>
-            <?php
-        }
-        ?>
-
-
 
         <div class="row">
             <div class="large-12 columns">
@@ -55,7 +43,7 @@
                     aplicacion sencilla, hasta una compleja aplicacion con funcionalidad completa.
                     <br/><br/>
 
-                    <em>CorePHP</em> se basa en el patron de diseño DAO y toma algunas practicas del modelo MVC, dando
+                    <em>CorePHP</em> se basa en el patron de diseño DAO y toma algunas practicas del patron MVC, dando
                     como resultado aplicaciones modulares y faciles de manipular convirtiendola en una herramienta
                     flexible para cualquier tipo de desarrollo que involucre bases de datos.
                     <br/><br/>

@@ -33,7 +33,7 @@ $filemanager = new DirectoryUtils();
     <header>
         <div class="row">
             <div class="large-12 columns">
-                <h1>CorePHP</h1>
+                <h1>CorePHP <small>Versión: 4.0</small></h1>
                 <h6>Una solución para la creación de plataformas de administración de una manera facil, rapida y segura.</h6>
             </div>
         </div>
@@ -93,7 +93,7 @@ $filemanager = new DirectoryUtils();
                     <p>
                         Seleccione la tabla que servira para los usuarios administradores del panel de control. Esta tabla debera ser una tabla con al menos 2 campos
                         usuario y contraseña (los nombre de los campos no son obligatorios), o puede seleccionar la opcion 'Generar automaticamente', la cual creara una
-                        tabla dedicada a la gestion de administradores para el panel de comtrol. La geeracion automatica no modificara la estructura existende
+                        tabla dedicada a la gestion de administradores para el panel de control. La generacion automática no modificara la estructura existente
                         de la base de datos.
                     </p>
                 </div>
@@ -154,8 +154,8 @@ $filemanager = new DirectoryUtils();
             <div class="row">
                 <div class="large-12 columns">
                     <p>
-                        Seleccione respectivamente el campo correspondiente a <b><i>'Usuario'</i></b> y <b><i>Password</i></b>.<br/>
-                        Estos campos sera usados para el ingreso a la aplicación.
+                        Seleccione respectivamente de <b><i>'Usuario'</i></b> y <b><i>Password</i></b>.<br/>
+                        Estos campos seran usados para el ingreso a la aplicación.
                     </p>
                 </div>
             </div>
@@ -221,7 +221,7 @@ $filemanager = new DirectoryUtils();
                 </div>
                 <div class="large-12 columns">
                     <p>
-                        Selecciona las Vistas que deseas que se generen en tu aplicacion para cada tabla en tu base de datos
+                        Selecciona las vistas que desea que se generen en su aplicación para cada tabla en la base de datos
                     </p>
                 </div>
                 <div class="large-12 columns">

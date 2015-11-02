@@ -1,0 +1,11 @@
+<?php
+    switch($_GET['error']){
+        case 202:
+            echo "Las contraseñas no coninciden.";
+            break;
+
+        case 201:
+            echo "No se encontro el usuario.";
+            break;
+    }
+?>

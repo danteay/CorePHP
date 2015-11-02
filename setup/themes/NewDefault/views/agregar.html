@@ -1,10 +1,5 @@
-<?php
-require_once("../libs/Validations.php");
+<!--add_session_validate-->
 
-$validate = new Validations();
-
-$validate->sessionValidate();
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,11 +17,12 @@ $validate->sessionValidate();
     <!--date_plugin-->
     <!--time_plugin-->
     <!--datetime_plugin-->
+    <!--modal_plugin_css-->
 </head>
 
 <body>
 
-    <?php include("../libs/navigation.php"); ?>
+    <!--main_navigation-->
 
     <main class="">
 
@@ -42,14 +38,14 @@ $validate->sessionValidate();
                     <ul class="title-area">
                         <li class="name"></li>
                         <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
-                        <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+                        <li class="toggle-topbar menu-icon"><a href="#"><span>Form</span></a></li>
                     </ul>
 
                     <section class="top-bar-section">
                         <!-- Right Nav Section -->
                         <ul class="right">
                             <li><a href="report{{tabla}}.php">Cancelar</a></li>
-                            <li class="active"><a onclick="document.addform.submit();" id="send-addform" href="#">Crear registro</a></li>
+                            <li class="active"><a id="send-addform" href="#">Crear registro</a></li>
                         </ul>
                     </section>
                 </nav>
@@ -68,9 +64,12 @@ $validate->sessionValidate();
         </div>
     </main>
 
+    <!--modal_structure-->
 
     <script src="../js/foundation.min.js"></script>
     <script src="../js/foundation/foundation.topbar.js"></script>
+    <!--modal_plugin_js-->
+    <!--jsvalidation_addplugin-->
 
     <script>
         $(document).foundation();

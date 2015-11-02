@@ -1,0 +1,20 @@
+<?php
+    $stat = 0;
+    $cont = 0;
+
+    try{
+        $columns = $objmodel->getColumns();
+
+        while($col = $columns->fetch_array(MYSQLI_NUM)){
+            echo "<th>".$col[0]."</th>";
+
+            if($col[3] == "PRI"){
+                $stat = $cont;
+            }
+
+            $cont++;
+        }
+    }catch (Exception $e){
+        echo $e->getTrace();
+    }
+?>

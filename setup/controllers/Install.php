@@ -1,7 +1,9 @@
 <?php
 require_once("../../core/DirectoryUtils.php");
+require_once("GeneralValidations.php");
+require_once("JsActionsValidate.php");
 
-class Install
+class Install extends GeneralValidations
 {
 
     private $DBO;
@@ -14,6 +16,7 @@ class Install
     private $theme_path;
     private $viewGenerate;
     private $dir_to_copy;
+    private $objjsav;
 
     public function __construct($configdb = array()){
         $this->configdb = $configdb;
@@ -48,10 +51,12 @@ class Install
 
             if($this->configdb['adminTab'] == "defaultAdminTable"){
                 $this->activePanel = "default";
+                $this->setThemeConfiguration();
                 $this->createModels();
             }else{
                 if(isset($this->configdb['llave1']) && !empty($this->configdb['llave1']) && isset($this->configdb['llave2']) && !empty($this->configdb['llave2'])){
                     $this->activePanel = "custom";
+                    $this->setThemeConfiguration();
                     $this->createModels();
                 }else{
                     header("Location: ../configPanel.php?db=".$this->configdb['dbas']."&tb=".$this->configdb['adminTab']."&theme=".$this->theme_name);
@@ -77,11 +82,23 @@ class Install
         chmod("../../core/DBOMySQL.php",0777);
     }
 
+    public function setThemeConfiguration(){
+        try{
+            $this->theme = new SimpleXMLElement(file_get_contents("../themes/" . $this->theme_name . "/configTheme.xml"));
+
+            $this->dir_to_copy = "../themes/" . $this->theme_name . "/directoryToCopy";
+
+            if ($this->activePanel == "default" || $this->activePanel == "custom") {
+                $this->createThemeDirectorys();
+            }
+        }catch(Exception $e){
+            echo "<pre>";
+            $e->getTrace();
+            echo "</pre>";
+        }
+    }
+
     private function createModels(){
-
-        $this->theme = new SimpleXMLElement(file_get_contents("../themes/".$this->theme_name."/configTheme.xml"));
-
-        $this->dir_to_copy = "../themes/".$this->theme_name."/directoryToCopy";
 
         require_once("../../core/DBOMySQL.php");
 
@@ -262,10 +279,6 @@ class Install
             $this->createDefault();
         }
 
-        if($this->activePanel == 'default' || $this->activePanel == 'custom'){
-            $this->createThemeDirectorys();
-        }
-
         $this->queryMap = str_replace("{{querys}}",$totalQuery,$this->queryMap);
         file_put_contents("../../libs/QueryMap.php",$this->queryMap);
         chmod("../../libs/QueryMap.php",0777);
@@ -283,17 +296,17 @@ class Install
             case "default":
                 $this->copyThemeFiles();
                 $this->copyNavigation();
-                #header("Location: ../steps.php?error=0&ad=true");
+                header("Location: ../steps.php?error=0&ad=true");
                 break;
 
             case "custom":
                 $this->copyThemeFiles();
                 $this->copyNavigation();
-                #header("Location: ../steps.php?error=0&ad=true&custom");
+                header("Location: ../steps.php?error=0&ad=true&custom");
                 break;
 
             default:
-                #header("Location: ../steps.php?error=0");
+                header("Location: ../steps.php?error=0");
                 break;
         }
     }
@@ -337,17 +350,26 @@ class Install
 
         file_put_contents("../../controllers/loginController.php",$login);
 
-        $list = $this->createListHome();
+        $this->createHome();
 
-        $home = file_get_contents($this->theme_path.$this->theme->views->homeview['structure']);
+        $this->createIndex();
 
-        $home = str_replace("{{reports}}",$list,$home);
-        file_put_contents("../../views/home.php",$home);
+    }
 
+    public function createIndex(){
+        $index = file_get_contents($this->theme_path.$this->theme->views->indexview['structure']);
 
+        $session_valiate = file_get_contents("../files/codeinserts/index_session_validate.txt");
+        $error_case = file_get_contents("../files/codeinserts/index_error_case.txt");
+        $if_error = "<?php if(isset(\$_GET['error'])){ ?>";
+        $end_if_error = "<?php } ?>";
 
-        copy($this->theme_path.$this->theme->views->indexview['structure'],"../../index.php");
+        $index = str_replace("<!--index_session_validate-->",$session_valiate,$index);
+        $index = str_replace("<!--index_error_case-->",$error_case,$index);
+        $index = str_replace("<!--if_error-->",$if_error,$index);
+        $index = str_replace("<!--end_if_error-->",$end_if_error,$index);
 
+        file_put_contents("../../index.php",$index);
     }
 
     private function createDefault(){
@@ -393,15 +415,26 @@ class Install
         $this->queryMap = str_replace("{{adminsection}}",$querys,$this->queryMap);
 
         $this->generateDefaultLogin();
-        $list = $this->createListHome();
-
-        $home = file_get_contents($this->theme_path.$this->theme->views->homeview['structure']);
-
-        $home = str_replace("{{reports}}",$list,$home);
-        file_put_contents("../../views/home.php",$home);
+        $this->createHome();
 
 
     }
+
+
+    private function createHome(){
+        $list = $this->createListHome();
+
+        $home = file_get_contents($this->theme_path.$this->theme->views->homeview['structure']);
+        $session_validate = file_get_contents("../files/codeinserts/home_session_validate.txt");
+        $main_navigation = file_get_contents("../files/codeinserts/main_navigation.txt");
+
+        $home = str_replace("<!--home_session_validate-->",$session_validate,$home);
+        $home = str_replace("<!--main_navigation-->",$main_navigation,$home);
+        $home = str_replace("{{reports}}",$list,$home);
+
+        file_put_contents("../../views/home.php",$home);
+    }
+
 
     private function generateDefaultLogin(){
 
@@ -412,7 +445,8 @@ class Install
         $login = str_replace("{{adminmodel}}","thecore_defaultAdminTable",$login);
 
         file_put_contents("../../controllers/loginController.php",$login);
-        copy($this->theme_path.$this->theme->views->indexview['structure'],"../../index.php");
+
+        $this->createIndex();
     }
 
 
@@ -422,6 +456,8 @@ class Install
 
 
     private function createListHome(){
+
+        $this->objjsav = new JsActionsValidate($this->DBO,$this->theme_path);
 
         $this->DBO->initializeQuery("SHOW TABLES FROM ".$this->configdb['dbas']);
         $list = '';
@@ -441,7 +477,7 @@ class Install
                             $list .= str_replace("{{tabla}}",$value['Tables_in_'.$this->configdb['dbas']],$structure)."\n";
                             $flag = false;
                         }else{
-                            $list .= "                            ".str_replace("{{tabla}}",$value['Tables_in_'.$this->configdb['dbas']],$structure)."\n";
+                            $list .= str_replace("{{tabla}}",$value['Tables_in_'.$this->configdb['dbas']],$structure)."\n";
                         }
 
                         $this->createReports($value['Tables_in_'.$this->configdb['dbas']],$cont);
@@ -452,6 +488,7 @@ class Install
 
                         $this->createAdds($value['Tables_in_'.$this->configdb['dbas']]);
                         $this->createAddControllers($value['Tables_in_'.$this->configdb['dbas']]);
+                        $this->objjsav->createValidates($this->theme->general->plugins->validateplugin,$value['Tables_in_'.$this->configdb['dbas']],"add");
 
                     }
 
@@ -460,6 +497,7 @@ class Install
                         $this->createEdits($value['Tables_in_'.$this->configdb['dbas']]);
                         $this->createDeleteControllers($value['Tables_in_'.$this->configdb['dbas']]);
                         $this->createUpdateControllers($value['Tables_in_'.$this->configdb['dbas']]);
+                        $this->objjsav->createValidates($this->theme->general->plugins->validateplugin,$value['Tables_in_'.$this->configdb['dbas']],"edit");
 
                     }
 
@@ -469,7 +507,10 @@ class Install
 
             return $list;
         }catch (Exception $e){
+            echo $e->getMessage();
+            echo "<pre>";
             echo $e->getTraceAsString();
+            echo "</pre>";
             return false;
         }
 
@@ -478,22 +519,33 @@ class Install
     private function createReports($table, $contindex){
         if(!empty($table)){
             $file = file_get_contents($this->theme_path.$this->theme->views->reportview['structure']);
-
             $boton = file_get_contents($this->theme_path.$this->theme->views->reportview->editbutton['structure']);
-
             $header = file_get_contents($this->theme_path.$this->theme->views->reportview->editbutton['header']);
 
+            $session_validate = file_get_contents("../files/codeinserts/report_session_validate.txt");
+            $search_options = file_get_contents("../files/codeinserts/report_search_options.txt");
+            $table_headers = file_get_contents("../files/codeinserts/report_table_headers.txt");
+            $table_data = file_get_contents("../files/codeinserts/report_table_data.txt");
+            $main_navigation = file_get_contents("../files/codeinserts/main_navigation.txt");
+
             $boton = str_replace("{{tabla}}",$table,$boton);
+            $session_validate = str_replace("{{tabla}}",$table,$session_validate);
 
             if($this->viewGenerate[$contindex][2] == "true"){
                 $file = str_replace("{{editHeader}}",$header,$file);
-                $file = str_replace("{{reportEditButton}}",$boton,$file);
+                $table_data = str_replace("{{reportEditButton}}",$boton,$table_data);
             }else{
                 $file = str_replace("{{editHeader}}","",$file);
-                $file = str_replace("{{reportEditButton}}","",$file);
+                $table_data = str_replace("{{reportEditButton}}","",$table_data);
             }
 
             $file = str_replace("{{tabla}}",$table,$file);
+
+            $file = str_replace("<!--report_session_validate-->",$session_validate,$file);
+            $file = str_replace("<!--report_search_options-->",$search_options,$file);
+            $file = str_replace("<!--report_table_headers-->",$table_headers,$file);
+            $file = str_replace("<!--report_table_data-->",$table_data,$file);
+            $file = str_replace("<!--main_navigation-->",$main_navigation,$file);
 
             file_put_contents("../../views/report".$table.".php",$file);
         }
@@ -526,6 +578,14 @@ class Install
             $text = file_get_contents($this->theme_path.$this->theme->views->addview->addtextarea['structure']);
             $default = file_get_contents($this->theme_path.$this->theme->views->addview->adddefaultinput['structure']);
             $datetime = file_get_contents($this->theme_path.$this->theme->views->addview->adddatetimeinput['structure']);
+
+            #---------------------------------------------------------------------#
+            #-------------------------- CODE INSERTS PHP -------------------------#
+            #---------------------------------------------------------------------#
+
+            $session_validate = file_get_contents("../files/codeinserts/add_session_validate.txt");
+            $main_navigation = file_get_contents("../files/codeinserts/main_navigation.txt");
+
 
             $this->DBO->initializeQuery("SHOW COLUMNS FROM ".$table);
             try{
@@ -582,6 +642,9 @@ class Install
                     $add = str_replace("{{tabla}}",$table,$add);
                     $add = str_replace("{{campos}}",$campos,$add);
 
+                    $add = str_replace("<!--add_session_validate-->",$session_validate,$add);
+                    $add = str_replace("<!--main_navigation-->",$main_navigation,$add);
+
                     if($flag_date){
                         $add = str_replace("<!--date_plugin-->",$date_plugin,$add);
                         $add = str_replace("<!--date_actives-->",$date_actives,$add);
@@ -633,6 +696,16 @@ class Install
             $default = file_get_contents($this->theme_path.$this->theme->views->editview->editdefaultinput['structure']);
             $datetime = file_get_contents($this->theme_path.$this->theme->views->editview->editdatetimeinput['structure']);
 
+
+            #---------------------------------------------------------------------#
+            #-------------------------- CODE INSERTS PHP -------------------------#
+            #---------------------------------------------------------------------#
+
+            $session_validate = file_get_contents("../files/codeinserts/edit_session_validate.txt");
+            $main_navigation = file_get_contents("../files/codeinserts/main_navigation.txt");
+            $edit_index = file_get_contents("../files/codeinserts/edit_index.txt");
+
+
             $this->DBO->initializeQuery("SHOW COLUMNS FROM ".$table);
             try{
                 $data = $this->DBO->getRequest();
@@ -680,6 +753,11 @@ class Install
 
                     $add = str_replace("{{tabla}}",$table,$add);
                     $add = str_replace("{{campos}}",$campos,$add);
+
+                    $add = str_replace("<!--edit_session_validate-->",$session_validate,$add);
+                    $add = str_replace("<!--edit_index-->",$edit_index,$add);
+                    $add = str_replace("<!--main_navigation-->",$main_navigation,$add);
+
 
                     if($flag_date){
                         $add = str_replace("<!--date_plugin-->",$date_plugin,$add);
@@ -779,7 +857,7 @@ class Install
 
 
     private function createValidate($case,$var,$nulable){
-        if(preg_match("/int/",$case) || preg_match("/integer/",$case) || preg_match("/smallint/",$case) || preg_match("/tinyint/",$case) || preg_match("/decimal/",$case) || preg_match("/dec/",$case) || preg_match("/numeric/",$case) || preg_match("/mediumint/",$case) || preg_match("/bigint/",$case) || preg_match("/real/",$case) || preg_match("/float/",$case) || preg_match("/double/",$case) || preg_match("/precision/",$case)){
+        if($this->isNumeric($case)){
             return "isset($".$var.") && is_numeric($".$var.")";
         }else{
             return $nulable == "NO" ? "isset($".$var.") && !empty($".$var.")" : "isset($".$var.")";
@@ -787,7 +865,7 @@ class Install
     }
 
     private function createInsertsQuery($case,$var){
-        if(preg_match("/int/",$case) || preg_match("/integer/",$case) || preg_match("/smallint/",$case) || preg_match("/tinyint/",$case) || preg_match("/decimal/",$case) || preg_match("/dec/",$case) || preg_match("/numeric/",$case) || preg_match("/mediumint/",$case) || preg_match("/bigint/",$case) || preg_match("/real/",$case) || preg_match("/float/",$case) || preg_match("/double/",$case) || preg_match("/precision/",$case)){
+        if($this->isNumeric($case)){
             return "[[".$var."]]";
         }else{
             return "'[[".$var."]]'";
@@ -795,7 +873,7 @@ class Install
     }
 
     private function createSeters($case,$var){
-        if(preg_match("/int/",$case) || preg_match("/integer/",$case) || preg_match("/smallint/",$case) || preg_match("/tinyint/",$case) || preg_match("/decimal/",$case) || preg_match("/dec/",$case) || preg_match("/numeric/",$case) || preg_match("/mediumint/",$case) || preg_match("/bigint/",$case) || preg_match("/real/",$case) || preg_match("/float/",$case) || preg_match("/double/",$case) || preg_match("/precision/",$case)){
+        if($this->isNumeric($case)){
             return $var." = [[".$var."]]";
         }else{
             return $var." = '[[".$var."]]'";

@@ -18,7 +18,7 @@
     <!ELEMENT footer EMPTY>
     <!ATTLIST footer structure CDATA #REQUIRED>
 
-    <!ELEMENT plugins (dateplugin?,timeplugin?,datetimeplugin?)>
+    <!ELEMENT plugins (dateplugin?,timeplugin?,datetimeplugin?,validateplugin?)>
 
         <!ELEMENT dateplugin (activation?)>
         <!ATTLIST dateplugin css CDATA #REQUIRED>
@@ -31,6 +31,21 @@
         <!ELEMENT datetimeplugin (activation?)>
         <!ATTLIST datetimeplugin css CDATA #REQUIRED>
         <!ATTLIST datetimeplugin js CDATA #REQUIRED>
+
+            <!ELEMENT validateplugin (addmodal,editmodal,activation?)>
+            <!ATTLIST validateplugin css CDATA #REQUIRED>
+            <!ATTLIST validateplugin js CDATA #REQUIRED>
+            <!ATTLIST validateplugin structure CDATA #REQUIRED>
+
+                <!ELEMENT addmodal EMPTY>
+                <!ATTLIST addmodal js CDATA #REQUIRED>
+                <!ATTLIST addmodal folder CDATA #REQUIRED>
+                <!ATTLIST addmodal validate CDATA #REQUIRED>
+
+                <!ELEMENT editmodal EMPTY>
+                <!ATTLIST editmodal js CDATA #REQUIRED>
+                <!ATTLIST editmodal folder CDATA #REQUIRED>
+                <!ATTLIST editmodal validate CDATA #REQUIRED>
 
             <!ELEMENT activation EMPTY>
             <!ATTLIST activation actcode CDATA #REQUIRED>

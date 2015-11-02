@@ -1,12 +1,5 @@
-<?php
-require_once("../libs/Validations.php");
-require_once("../models/{{tabla}}.php");
+<!--report_session_validate-->
 
-$objmodel = new {{tabla}}();
-$validate = new Validations();
-
-$validate->sessionValidate();
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +16,7 @@ $validate->sessionValidate();
 
 <body>
 
-    <?php include("../libs/navigation.php"); ?>
+    <!--main_navigation-->
 
     <main class="">
 
@@ -58,18 +51,9 @@ $validate->sessionValidate();
 				                    <div class="row collapse">
 					                    <div class="large-4 small-4 columns">
 						                    <select name="columnFilter" id="columnFilter">
-							                    <option value="all">Todas</option>
-							                    <?php
-				                                    try{
-				                                        $columns = $objmodel->getColumns();
 
-									                    while($col = $columns->fetch_array(MYSQLI_NUM)){
-									                        echo "<option value='".$col[0]."'>".$col[0]."</option>";
-									                    }
-								                    }catch (Exception $e){
-								                        echo $e->getTrace();
-								                    }
-							                    ?>
+							                    <!--report_search_options-->
+
 						                    </select>
 					                    </div>
 					                    <div class="large-6 small-6 columns">
@@ -95,76 +79,11 @@ $validate->sessionValidate();
                             <tr>
 	                            {{editHeader}}
 
-	                            <?php
-	                                $stat = 0;
-	                                $cont = 0;
-
-	                                try{
-	                                    $columns = $objmodel->getColumns();
-
-			                            while($col = $columns->fetch_array(MYSQLI_NUM)){
-				                            echo "<th>".$col[0]."</th>";
-
-				                            if($col[3] == "PRI"){
-				                                $stat = $cont;
-				                            }
-
-				                            $cont++;
-			                            }
-		                            }catch (Exception $e){
-		                                echo $e->getTrace();
-		                            }
-	                            ?>
+	                            <!--report_table_headers-->
                             </tr>
                         </thead>
                         <tbody>
-	                        <?php
-	                            if(isset($_POST['columnFilter']) && isset($_POST['buscar'])){
-	                                try{
-	                                    $data = $objmodel->getFilter($_POST['columnFilter'],"%".$_POST['buscar']."%");
-
-				                        if($data != false){
-					                        while($fila = $data->fetch_array(MYSQLI_NUM)){
-						                        echo "<tr>";
-						                        echo "{{reportEditButton}}";
-
-						                        foreach($fila as $value){
-						                            echo "<td>".$value."</td>";
-						                        }
-
-						                        echo "</tr>";
-				                            }
-				                        }else{
-				                            echo "<center><h2>No hay registros</h2></center>";
-				                        }
-
-			                        }catch (Exception $e){
-			                            echo $e->getTrace();
-			                        }
-		                        }else{
-			                        try{
-			                            $data = $objmodel->getAllItems();
-
-				                        if($data != false){
-					                        while($fila = $data->fetch_array(MYSQLI_NUM)){
-						                        echo "<tr>";
-						                        echo "{{reportEditButton}}";
-
-						                        foreach($fila as $value){
-						                            echo "<td>".$value."</td>";
-						                        }
-
-						                        echo "</tr>";
-				                            }
-				                        }else{
-				                            echo "<div class='text-center'><h2>No hay registros</h2></div>";
-				                        }
-
-			                        }catch (Exception $e){
-			                            echo $e->getTrace();
-			                        }
-		                        }
-	                        ?>
+	                        <!--report_table_data-->
                         </tbody>
                     </table>
                 </div>

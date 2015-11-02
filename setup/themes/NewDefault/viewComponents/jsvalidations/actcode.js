@@ -1,0 +1,1 @@
+$('#modal-error').foundation('reveal', 'open');

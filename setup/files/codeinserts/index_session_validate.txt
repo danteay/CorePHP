@@ -1,0 +1,9 @@
+<?php
+require_once("core/SessionUtils.php");
+
+$session = new SessionUtils();
+
+if(isset($_SESSION['admin']) && $_SESSION['admin'] != null){
+    header("Location: views/home.php");
+}
+?>

@@ -1,0 +1,9 @@
+<?php
+require_once("../libs/Validations.php");
+require_once("../models/{{tabla}}.php");
+
+$objmodel = new {{tabla}}();
+$validate = new Validations();
+
+$validate->sessionValidate();
+?>
